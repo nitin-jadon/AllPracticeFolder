@@ -1,0 +1,298 @@
+Different DB Configurations Spring boot:
+Postgres
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/microservice
+    username: postgres
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+Note: Postgres data can be viewed by PGAdmi -> Databases->db name -> schemas -> Tables -> right click tablename -> View/edit data -> all rows
+-----------------------------------------------------------
+SQL
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/microservices
+    username: root
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+---------------------------------------------------------------
+MONGO DB
+
+server:
+  port: 8083
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: microservices
+Note: MongoDB data can be viewed by MongoDBCompass.
+@Document(“documentname”) is used instead of @Entity for mongoDB.
+Id is be default auto-generated in mongodb.
+
+-----------------------------------------------------------------
+MONGO DB
+
+-> Contains data in form of collections and document.
+-> Each collections store specific type of data record like user, authors inside documents.
+-> Document are very much like in JSON format called BSON format.
+-> It allows us to store nested documents within a document.
+-> Each document present inside collection has unique id through which it can be called.
+-> For example a document in the books collection could have an author property and the author property could be a document in itself which has a first name property a last name property and an age property
+
+Install mongodb as a service locally with compass
+Install shell externally
+use cmd command: mongosh to verify it is installed
+mongodb compass is gui used to visualize the data stored in db.
+write "service" on search tab -> make sure mongodb service is running -> Open compass -> connect
+create db -> collection name -> create document in json format by "add data" -> insert document
+_id is auto added in each document.
+can add array of documents in one go.
+Example:
+[
+  {
+      "author" : "jk rowling",
+	  "title" : "Apes"
+  },
+  {
+      "author" : "jk rowling",
+	  "title" : "Apes 2"
+  }
+]
+
+We can filter documents based on field by adding field: value in filterdata
+
+mongodb shell or open cmd and type "mongosh" to enter into shell
+exit-> to exit shell
+show dbs -> to show all dbs
+use dbs -> to enter in particular db
+show collections -> to show collections of db
+var any_variable = "hello" -> type "any_variable" -> hello (output) (assign any variable and get value)
+use <collection name>
+db.<collection name>.insertOne({author: "rowling", title: "Apes", pages: 250})  -> insert 1 document in db
+Even if the collection name is not present, it will auto create collection with respective document.
+db.<collection name>.insertMany([{author: "rowling", title: "Apes", pages: 250}, {author: "row", title: "Ap", pages: 150}])  -> insert many document in db
+db.<collection name>.find() -> show 20 documents
+it -> iterate to next 20 documents
+-> find has  arguments (1st takes matchig fields, 2nd takes fields which should be shown on cmd)
+  1st argument example
+  db.<collection name>.find({fieldName1: fieldValue1}) -> show documents based on filter (can add more fields o filter precisely)
+  2nd argument example
+  db.<collection name>.find({}, {fieldName1: 1, fieldName2: 1}) -> show documents based on filter (can add more fields o filter precisely)
+db.<collection name>.findOne(_id:objectId())
+
+Chaining of find() method
+db.<collection name>.find({fieldName1: fieldValue1}).count() -> print integer count value of total documents available with this condition
+db.<collection name>.find({fieldName1: fieldValue1}).limit(n) -> show only n documents 
+db.<collection name>.find({fieldName1: fieldValue1}).sort({fieldValue: 1}) -> print in sorted way (1 is for ascending order, -1 is for descending)
+db.<collection name>.find({fieldName1: fieldValue1}).sort({fieldValue: 1}).limit(3) -> sort then print only 3 documents
+
+Nested documents example:
+db.books.insertOne({ author: "jk rowling", title: "jungle book", reviews: {name: "Sushmita", body: "Movie is good"}})
+db.books.insertOne({ author: "jk rowling", title: "jungle book", reviews: [{name: "Sushmita", body: "Movie is good"}, {name: "Sneha", body: "Movie is one time watch"}]})
+db.books.insertMany([{ author: "jk rowling", title: "jungle book", reviews: [{name: "Sushmita", body: "Movie is good"}, {name: "Sneha", body: "Movie is one time watch"}]}, { author: "RM Singh", title: "Delhi book", reviews: [{name: "Sahil", body: "Movie is bad"}, {name: "Suraj", body: "Awesome Movie"}]}])
+
+Operators $ -> to fetch documents with field value 
+greater than (gt), lesser than (lt), less than equal to (lte) and greater than equal to (gte), or, in to get these array of values only
+example:
+db.books.find({rating : {$gt:7}}) -> fetches books documents with > 7 rating
+db.books.find({rating : {$lt:7}}) -> fetches books documents with < 7 rating
+db.books.find({rating : {$lte:7}}) -> fetches books documents with <= 7 rating
+db.books.find({rating : {$gte:7}, author: "toi"})-> fetches books documents with >= 7 rating and author jk rowling
+db.books.find({$or: [{rating: {$gte:7}}, {pages: {$lte: 300}}]}) -> fetch documents with either rating >=7 or pages <= 300
+db.books.find({rating: {$in : [7, 8 , 9]}}) -> fetch documents with values rating values 7 or 8 or 9
+db.books.find({rating: {$nin : [7, 8 , 9]}}) -> fetch documents with rating values Not 7 or 8 or 9
+
+array
+db.books.find({genre: {$all : ["scifi", "fantasy"]}}) -> fetch documents with genre atleast scifi and fantasy
+db.books.find({genre: "scifi"}) -> not exact match with genre but should have atleast scifi in genre
+db.books.find({genre: ["scifi"]}) -> exact macth with genre having scifi only
+nest document array find
+{
+  "author": "jk rowling",
+  "title": "jungle book",
+  "reviews": {
+    "name": "Sushmita",
+    "body": "Movie is good"
+  }
+}
+db.books.find({"reviews.name": "Sushmita"}) -> reviews sub document should have name as Sushmita.
+
+Import/export data
+Export data from compass -> click on button right  beside "add data" button -> export
+Import data by "add data" button amd browse
+
+delete documents
+db.books.deleteOne({_id:ObjectId(value)})
+db.books.deleteOne({fieldName : fieldValue})
+db.books.deleteMany({fieldName : fieldValue})
+
+update documents [updateOne first Argument is which document to update, 2nd argument is what to update]
+$set operator is used.
+db.books.updateOne({}, {})
+example:
+db.books.updateOne({ _id: ObjectId('65be74d129353093e775515f')}, {$set: {author: "lal bahadur shastri", title: "nainital book"}})
+db.books.updateOne({})
+db.books.updateMany({rating:9}, {$set: {rating: 10}})
+
+increment operator -> to increase or decrease field value
+db.books.updateOne({_id:ObjectId()}, {$inc: {pages: 10}})
+db.books.updateOne({_id:ObjectId()}, {$inc: {pages: -10}})
+
+$push operator to add new values to field array | $each operator to add muliple entries to field
+db.books.updateOne({_id: ObjectId('65be5d5317ecf505c4d9eb4f')}, {$push : {genre: {$each: ["22", "33"]}}})
+
+Indexes in mongodb
+	db.books.find({author: "jk rowling"}).explain('executionStats') -> tells execution statistics about this query
+	like how many documents it searched and how many are retrieved
+	nReturned: 3
+	totalDocsExamined: 12
+	To find documents with field {author: "jk rowling"}, we can create new indexing for them so that totalDocsExamined will become less.
+example:
+db.books.createIndex({author: "jk rowling"})
+db.books.find({author: "jk rowling"}).explain('executionStats')-> Now total totalDocsExamined will become less.
+
+db.books.getIndexes() -> to get all indexes available
+db.books.dropIndex({rating: 9}) -> to drop indexes
+
+
+
+
+Install mongodb drivers on nodejs 
+	Open new VSCODE terminal
+	npm install mongodb --save
+
+Print all documents of mongodb collections thorugh nodejs as follows:
+app.get("/books", (req, res) => {
+    let books = []
+    db.collection('books')
+    .find()//cursor in node js, returns cursor of list of books 
+    .sort({author: 1}) //sorting books documents based on author
+    .forEach(element => books.push(element))// iterate batch of books documents and pushing elements to array. asynchronous method so will take time to push all data in books array
+    .then(() => { res.status(200).json(books)})//  once all data is pushed, send res with books info
+    .catch(() => res.status(500).json({error: 'Could not fetch the documents.'}));// if error occurs then error msg.
+})
+
+
+Fetch document with id
+const {ObjectId} = require('mongodb')
+
+app.get("/books/:id", (req, res) => {
+    if(ObjectId.isValid(req.params.id)){
+        db.collection('books')
+        .findOne({_id: new ObjectId(req.params.id)})
+        .then(doc => {res.status(200).json(doc)})
+        .catch(err => res.status(500).json({error: 'Could not fetch the document'}))
+    }
+    else{
+        res.status(500).json({error: 'not a valid document id'})
+    }
+    
+})
+
+post request to add new document in mongodb through nodejs 
+const app = express()
+app.use(express.json())// used for using body of request
+
+app.post("/books", (req, res) => {
+    const book = req.body
+
+    db.collection('books')
+    .insertOne(book)
+    .then(result => {
+        res.status(201).json(result)
+    })
+    .catch(err => {res.status(500).json({err: "insertion is not possible."})
+    })
+})
+
+//delete document by id
+app.delete("/books/:id", (req, res) =>
+{
+    if(ObjectId.isValid(req.params.id)){
+        db.collection('books')
+        .deleteOne({_id: new ObjectId(req.params.id)})
+        .then(result => {res.status(200).json(result)})
+        .catch(err => res.status(500).json({error: 'Could not delete the document'}))
+    }
+    else{
+        res.status(500).json({error: 'not a valid document id'})
+    }
+})
+
+//update document fields
+app.patch("/books/:id", (req, res) =>
+{
+    const update = req.body
+    if(ObjectId.isValid(req.params.id)){
+        db.collection('books')
+        .updateOne({_id: new ObjectId(req.params.id)}, {$set : update})
+        .then(result => {res.status(200).json(result)})
+        .catch(err => res.status(500).json({error: 'Could not update the document'}))
+    }
+    else{
+        res.status(500).json({error: 'not a valid document id'})
+    }
+})
+
+
+//pagination in mongodb and nodejs
+skip(n) -> to skip n number of books
+limit(n) -> to print n number of books per page
+app.get("/books", (req, res) => {
+    const booksPerPage = 3
+    const pageNumber = req.query.p || 0
+
+    let books = []
+    db.collection('books')
+    .find()//cursor in node js, returns cursor of list of books 
+    .sort({author: 1}) //sorting books documents based on author
+    .skip(booksPerPage * pageNumber)// skip first 3*pagenumber previous books
+    .limit(booksPerPage)//show 3 books per page
+    .forEach(element => books.push(element))// iterate batch of books documents and pushing elements to array. asynchronous method so will take time to push all data in books array
+    .then(() => { res.status(200).json(books)})//  once all data is pushed, send res with books info
+    .catch(() => res.status(500).json({error: 'Could not fetch the documents.'}));// if error occurs then error msg.
+})
+
+
+Mongodb atlas: https://www.mongodb.com/atlas/database
+jordannitin
+ekHGdn1V7O1NVzCC
+
+create account and create database -> free -> create cluster
+network access -> set with your local or all ip address
+"Connect" with DB and get the link like this: 'mongodb+srv://jordannitin96:<password>@cluster0.w7zscsl.mongodb.net/
+use this link in our code.
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+ 
+
+

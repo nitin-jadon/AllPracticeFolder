@@ -1,0 +1,135 @@
+user authentication 
+2 ways -> sessions and tokens
+-> cookie-based server-side sessions
+the process begins with a user filling out their username and password and then submitting it to a server which then validates it creates a session in the database then responds with a session id the session id will be saved in the browser's cookie jar which is a place in the browser to save
+key value pairs that will be sent back to the server on each subsequent request it can then respond back with content designed for the currently logged end
+user.
+In other words we have a stateful session between the front end client and backend server this approach works great but there are some drawbacks it can be vulnerable to an attack known as Stateful Session cross-site request forgery where the attacker points the user to a site they're logged into to perform actions they didn't intend to like submitting a payment or changing their password.
+although the risk is very low especially if you use a modern framework to implement your code the bigger problem is that you'll need to store the session id in a database or keep it in memory on the server because most of today's cloud applications are scaled horizontally this can be a huge bottleneck in production 
+-> Token based authentication
+token-based authentication which solves this problem but introduces its own set of challenges Token Authentication the process begins the same with the client sending its login details to the server instead of storing a session id it generates a json web token the jwt is created with a private key on the server then it's sent back to the browser where it's normally kept in local storage.
+on future requests the jot will be added to the authorization header prefixed by bearer the server then only needs to validate the signature there's no need for a database lookup somewhere else in the infrastructure and that's way more efficient when dealing with a distributed system in the cloud Token Limitations however tokens can still be hijacked by an attacker and they can also be difficult to invalidate and they can't be used to authenticate a user in the background on the server.
+
+Steps for JWT token authorisation:
+	When user logins and authenticated then token is generated.
+	Token is created by setting subject of username with expiration time and signed authority.
+	When authorisation request goes to server then bearer containing token is also sent to server through request.
+	token is then validated by extracting above mentioned claims to get username and expiry datetime.
+	Extracted details of token are compare with DB user details.
+	If token is valid then, we set user details to token.
+	We add filter before user details authorisation is done to create stateless session as we are not saving anything in cookies.
+
+go to jwt.io, scroll down and find encoded and decoded form of token
+Encoded:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ
+.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+Decoded:
+All these key value JSON format are called claims
+3 claims are present in token as follows:
+HEADER:ALGORITHM & TOKEN TYPE
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+PAYLOAD:DATA
+{
+  "sub": "1234567890",
+  "name": "John Doe",
+  "iat": 1516239022
+}
+VERIFY SIGNATURE
+HMACSHA256(
+  base64UrlEncode(header) + "." +
+  base64UrlEncode(payload),
+
+Application.properties accepts only string datatypes but yml file allows all datatypes.
+For complex configuration, it is preferred to use yml files.
+
+
+           EMAIL Verification
+1. Register the user 
+2. Token is generated with some limited expiry time and it will be stored on DB table with user "is_enabled" column false.
+3. Event is generated through applicationEvent and link containing tokenid is sent to activate link to email which should be verified.
+4. YML configuration should have mail related configurations as follows: here username and password should be sender mail.
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: nitin97jadon@gmail.com
+    password: hjuhasxqvhysyvyr(user password generated from gmail.)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+5. Once that link is clicked by reciever email, token is extracted and validated if it is not expired the, token table "is_enabled" becomes true and user is able to sign in.
+
+
+EMAIL re-send token verification
+
+	href link is created when token becomes expired and client tries to verify mail link from mail inbox.
+	href link will check whether token is present or not in db.
+	If present then, expiry time is increased for the token and is_enabled column is set to 1 for the user.
+	User is now able to login.
+
+yml file is used in complex projects. Plus it has tree structure and support multiple datat types. Properties files has key value structure.
+
+----------------------------------------------------------------------------------------------------
+JWT - json web token
+json object used for securely transferring info between 2 parties (client & server).
+It has 3 parts - header, payload ,signature
+
+HEADER:ALGORITHM & TOKEN TYPE
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+PAYLOAD:DATA
+"sub": "1234567890",
+  "name": "John Doe",
+  "iat": 1516239022
+{
+  "sub": "1234567890",
+  "name": "John Doe",
+  "iat": 1516239022
+}
+
+VERIFY SIGNATURE
+HMACSHA256(
+  base64UrlEncode(header) + "." +
+  base64UrlEncode(payload),
+  your-256-bit-secret
+) 
+
+Setup:
+Use dependencies: spring security, spring web
+When we add spring security dependency, all controller request mapping are secured, they can be accessed by using username: user and generated password on console.
+
+Authorization is key, bearer <token> is value
+
+Steps:
+1. A jwt service class will be created which will have business logic of following operations:
+-> validate token -> by extracting claims and checking expiration time and username.
+-> generate token
+-> check expiration date of token.
+Note: this class can be taken from browser: jwtUtil.class.
+2. Class implementing UserDetails and having 3 parameters:
+    username, password & arrayList of authorities of type SimpleGrantedAuthority.
+    private String userName;
+    private String password;
+    private List<SimpleGrantedAuthority> authorities;
+3. Class is created which implements UserDetailsService (It will load user by username from DB and maps it to class implementing UserDetails).
+4. We will create jwtController class which will generate token for first time if user is authenticated. (autowire jwtUtil/jwtService and AuthenticationManager 
+   implementation class). If authenticated, token is generated and returned.
+5. JwtFilter class is created implementing OncePerRequestFilter. It will validate token which is sent in header with key: Authorization, value: Bearer 
+   tokenValue and provide authentication (the method of this class will be added in securityFilterChain).
+   It will autowire jwtUtil/JwtService to validate token and extract username from token.
+   It will also autowire class implementing UserDetailsService to load user by username from DB.
+   If token is validated, username & password is authenticated through token using SecurityContextHolder.
+6. Create configuration class with @Configuration & @EnableWebSecurity
+   autowire JwtFilter & class implementing userDetailsService.
+   create following beans: PasswordEncoder, AuthenticationProvider which uses userDetailsService, AuthenticationManager
+   create another bean for SecurityFilterChain filterChain which authorize http requests as per authority and add filter jwtAuthenticationFilter.

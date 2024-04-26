@@ -1,0 +1,272 @@
+aop, jwt, native
+
+
+thymeleaf
+Java template engine for both web & standalone environments.
+capable of processing HTML, CSS, Javascript, plain text.
+File is saved with .html file.
+rendering is done on server-side.
+mainly used for generating html views for web apps.
+
+JSP vs thymeleaf:
+file are saved with ".jsp" for jsp. thymeleaf files are saved in ".html" file.
+jsp is complied to servlet and servlet life cycle happens and generates web content. thymeleaf parses html file & generates we b content.
+jsp is not template engine whereas thymeleaf is template engine.
+Example:
+<p th:text=${name}>
+
+Setup for thymeleaf and emmet:
+1. download spring tool suite -> open -> folder will be extracted
+2. copy thymeleaf plugin for eclipse url from browser -> go to Help >> Install New Software -> add -> Name: thymeleaf , Path:   
+   http://www.thymeleaf.org/eclipse-plugin-update-site/ -> select thymeleaf eclipse plugin -> next -> finish.
+3. copy Emmet plugin for eclipse from browser -> go to Help >> Install New Software -> add -> Name: thymeleaf ,
+   Path: http://download.emmet.io/eclipse/updates/ -> select emmet eclipse plugin -> next -> finish.
+
+Setup for project in spring tool suite:
+Spring tool suite -> new -> spring starter project -> add workspace location, group id, artifact id, select maven ->
+add dependencies like spring web, thymeleaf.
+
+Java code:
+create controller class with @Controller and @RequestMapping. Create method and return string which will act as view .html file.
+Create html file in template of src/main/resources with same name as returned by controller method.
+delete all data from html file and write "html:5" -> tab.
+view resolver will resolve the string returned from controller handler -> html file will be parsed and dynamic web content.
+
+thymeleaf code syntax:
+3 ways display values of model attribute coming from handler using th:text:
+->   <h1 th:text="${name}"></h1>
+->   <h2>name of owner is <span th:text="${name}"></span></h2>
+->   <h2 th:text="'current date is ' + ${date}"></h2>
+
+create variables to be used in html using th:with :
+	<div th:with="a=5, b=11, c=${name}">
+    	<h1>value of a is <span th:text="${a}"></span></h1>
+		<h1 th:text="'value of b is ' + ${b}"></h1>
+	</div>
+	Note: scope of variable is within the tag it is defined.
+
+use inbuilt methods:
+    <h2>name of owner is <span th:text="${ #strings.toUpperCase(name) }"></span></h2>
+	<h2>length of name is <span th:text="${ #strings.length(name)}"></span></h2>
+
+arithmetic operations:
+    <div th:with="a=5, b=11, c=${name}">
+    	<h1>value of a is <span th:text="${a}"></span></h1>
+		<h1 th:text="'value of b is ' + ${b}"></h1>
+		<h1 th:text="'sum of a and b is ' + ${a+b}"></h1>
+	</div>
+
+iteration can be performed on collections:
+    <li th:each="n : ${listName}">
+	    <span th:text="${n}"></span>
+	</li>
+    Can also add conditional style during iterations: 
+	status used in below example has status.odd, status.even, status.count, status.index values.
+	(here, odd values are bold and red)
+	<ul>
+	<li th:each="n : ${list}">
+	    <span  th:text="${n}"></span>
+	</li>
+	<li th:each="n, status : ${list}">
+	    <span th:style="${status.odd}? 'color:red;font-weight:bold;' : ''"  th:text="${n}"></span>
+	</li>
+	</ul>
+
+Conditions:
+  turnary operator:
+	<h1>user is <span th:style=" ${isActive} ? 'color:green;' : 'color:red;'" 
+	                  th:text="${isActive} ? 'Active' : 'Inactive'">
+	            </span>
+	</h1>
+  if&unless:
+	<h1 th:if="${gender}=='M'">Male</h1>
+	<h1 th:unless="${gender}=='M'">Female</h1>
+  switch:
+	<div th:switch="${#lists.size(listName)}">
+		<h1 th:case="'0'">list has 0 element</h1>
+		<h1 th:case="'1'">list has 1 element</h1>
+		<h1 th:case="*">list has atleast 2 elements</h1>
+	</div>
+
+Fragments:
+   part of html code generally used for header, footers to avoid adding repeated set of tags
+   -> th:include (it adds only the content of fragmented content excluding remote(footer) tag)
+   -> th:replace (it replaces complete host data with remote tag data)
+   -> th:insert  (it adds al remote file tag data inside host tag)
+  Host file (host.html):
+   <body>
+   <footer id="host" th:insert="footerFile::footerName">
+   </footer>
+   </body>
+  Remote file (footerFile.html)
+   <body>
+	<footer id="footer" th:fragment="footer1">
+	<div class="container">
+	<h1>footer added</h1>
+	</div>
+	</footer>
+   </body>
+   
+Dynamic value sent from one html file to another using thymeleaf:
+  remote file:
+ <body>
+	<footer id="footer" th:fragment="footer1(title, subtitle)">
+	<div class="container">
+	<h1>footer added</h1>
+	<h1>title <span th:text="${title}"></span></h1>
+	<h1>subtitle <span th:text="${subtitle}"></span></h1>
+	</div>
+	</footer>
+  </body>
+ host file:
+  <body>
+    <h1>head</h1>
+	<footer id="host" th:include="footerFile::footer1('airbender', 'english')">
+	</footer>
+  </body>
+
+Dynamic value sent from controller -> one html file -> another html file
+  Remote file:
+  <body>
+    <h1>head</h1>
+	<footer id="host" th:include="footerFile::footer1(${title}, ${subtitle})">
+	</footer>
+  </body>
+  Host file:
+  <body>
+	<footer id="footer" th:fragment="footer1(title, subtitle)">
+	<div class="container">
+	<h1>footer added</h1>
+	<h1>title <span th:text="${title}"></span></h1>
+	<h1>subtitle <span th:text="${subtitle}"></span></h1>
+	</div>
+	</footer>
+  </body>
+  
+Inherit Content from fragment into base page so that we do not need to write repeated code.
+Base.html
+    <!doctype html>
+	<html lang="en" htmlns:th="http://www.thymeLeaf.org" th:fragment="Layout(content)">
+	<head>
+		<meta charset="UTF-8" />
+		<title>base page</title>
+		<link rel="stylesheet" th:href="@{/style.css}" />
+	</head>
+	<body>
+		<h1>Header</h1>
+		<div th:replace=${content}></div>
+		<h1>Footer</h1>
+	</body>
+	</html>
+style.css
+    body{
+	background-color:blue;
+	}
+	section{
+		background-color:grey;
+	}
+aboutNew.html
+    <!doctype html>
+	<html lang="en"  htmlns:th="http://www.thymeLeaf.org" th:replace="base::Layout(~{::section})">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Document</title>
+	</head>
+	<body>
+		<section>
+		<h1>new section added</h1>
+		</section>
+	</body>
+	</html>
+Here, base.html will get css.html and aboutNew.html content so that if any other html file is created, same css and base design can be used.
+
+
+thymeleaf project with mysql
+
+project Setup:
+1. open spring tool suite -> file -> new -> spring starter project -> maven -> location, artifact, group id -> add dependencies:
+   spring data jpa, spring web, mysql driver, thymeleaf, spring boot devtools
+2. create packages for controller, service, entity, repository
+3. in controller add mapping and return view pages as per requirement.
+    @GetMapping("/students")
+	public String getStudents(Model model)
+	{
+		model.addAttribute("students", studentService.getAllStudents());
+		return "students";
+	}
+4. Create page <returning string name of controller>.html  -> html:5 <tab>
+5. google bootstrap 4 css cdn -> copy cdn link -> paste just after title tag
+
+Update jre of eclipse/ STS
+add jre if not configured -> right click on project package -> properties -> java build path -> libraries -> click on jre old version -> edit -> update execution env -> apply & finish
+-------------------------------------------------------------------------------
+Spring aop 
+aspect oriented programming just like object oriented programming. it is a programming paradigm to increase modularity by allowing separation of cross-cutting concern.
+it help to introduce services or external services as transactional management or logging into our application without affecting the code.
+These external services are called cross-cutting concerns.
+if we want to add some additional functionality before or after our existing code so, without affecting code we can add those services using aop.
+
+Aspect    -> class which implements cross cutting concerns (transaction, logger). Could be connfigured through xml or annotated with @Aspect.
+joinpoint -> any point in code such as method execution where advice are applied
+Advice    -> action taken by aspect at particular joinpoint
+
+Practical:
+1. file -> new -> maven project -> select workspace -> catalog (internal) -> maven-archtype-quickstart -> add groupId, artifact id.
+2. add dependencies LIKE spring-core , spring-context, spring-aop, aspectjrt, aspectjweaver, aspectjtools (version of dependencies core, aop and context should 
+   be same while adding it in project) (versions of aspectjrt, aspectjweaver, aspectjtools should be same with each other as well.)
+3. create xml file inside main package -> google "spring core dtd" -> copy bean config -> paste it in xml file.
+4. create new bean tag with name and class inside beans tag.
+	<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+		<!-- bean definitions here -->
+		<bean name="payment" class="com.aop.aopConcept.paymentService.PaymentServiceImpl"/>
+	</beans>
+5. add application context along with bean config file path in main class and get bean and exceute methods.
+    // provide bean config file path
+	ApplicationContext context = new ClassPathXmlApplicationContext("com/aop/aopConcept/config.xml");
+	// get bean with bean name and type of class
+	PaymentService service = context.getBean("payment", PaymentService.class);
+	//execute methods of that class
+	service.makePayment();
+	service.makePayment1();
+6. create aspect class and add advices
+   public class Aspect {
+	@Before("execution(* com.aop.aopConcept.paymentService.PaymentServiceImpl.makePayment())")
+	public void printBefore()
+	{
+		System.out.println("initializing payment");
+	}
+	@After("execution(* com.aop.aopConcept.paymentService.PaymentServiceImpl.makePayment())")
+	public void printAfter()
+	{
+		System.out.println("payment done");
+	}
+
+	@After("execution(* com.aop.aopConcept.paymentService.PaymentServiceImpl.makePayment1(..))")
+	public void printAfterParameterizedMthod()
+	{
+		System.out.println("second payment done");
+	}
+	here, parameter of @Before is in format -> execution(returnType classPath.* or classPath.methodName())
+	.. is added inside methodName only if that method takes parameter.
+7. add xmlns:aop and xml:schema for aop in config file of bean.
+   add aop autoproxy tag.
+   add bean for aspect class.
+   <?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:aop="http://www.springframework.org/schema/aop"  
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop.xsd">
+			<aop:aspectj-autoproxy />  
+		<!-- bean definitions here -->
+		<bean name="payment" class="com.aop.aopConcept.paymentService.PaymentServiceImpl"/>
+		<bean name="myAspect" class="com.aop.aopConcept.Aspect.Aspect"/>
+	</beans>
+8. Run program 

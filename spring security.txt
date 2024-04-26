@@ -1,0 +1,333 @@
+Spring security
+
+authentication -> identity of users is validated. To verify the user is whom they claim to be.
+authorisation  -> permission to access resources
+filter         -> an object is invoked during preprocessing or postprocessing of request.
+flow: request -> filter -> server
+filter -> authenticationManager -> authenticationProvider -> validates user
+If authentication is failed then, filter itself will send the response to user.
+
+
+Steps for security:
+1. filter intercepts the request -> convert the request to authenticate object using classes like UsernamePasswordAuthenticationToken ->sends the authenticate object to authentication manager which has asbtract method authenticate
+2. authenticationManager then takes help of providerManager (has implementation of authenticationManager) to provide right authentication provider needed for authentication
+3. authentication manager checks, iterates authenticationProvider one by one -> authenticationProvider has one interface userDetailsService -> userDetailsService has one method which loads the user by username.
+4. if user is authenticated -> authenticationProvider returns true and it will have valid authencity of user 
+5. providerManager sends authenticate object to filter -> filter sets the authentication to to security context.
+Dependencies: spring-boot-starter-security, spring-boot-starter-web
+
+Basic authentication (Basic Base64-encoded(username:password))
+can't logout, cookies are not used
+client get request -> server -> 401 unauthorized
+client get request with basicAuth authorization -> 200 ok
+
+
+-> Create config class for basic authentication for console generated password:
+@EnableWebSecurity
+@Configuration
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(expressionInterceptUrlRegistry ->
+                        expressionInterceptUrlRegistry.requestMatchers("/user/**").permitAll()
+                                .anyRequest().authenticated())
+                .httpBasic(httpSecurityHttpBasicConfigurer -> {});
+        return http.build();
+    }
+}
+Here, urls after user are permitted.
+
+-> Create config class for basic authentication with in memory authentication:
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	http.authorizeHttpRequests(expressionInterceptUrlRegistry ->
+					expressionInterceptUrlRegistry.requestMatchers("/user/**").permitAll()
+							.anyRequest().authenticated())
+			.httpBasic(httpSecurityHttpBasicConfigurer -> {});
+	return http.build();
+}
+
+@Bean
+public UserDetailsService users() {
+	UserDetails user = User.builder()
+			.username("user")
+			.password(this.passwordEncoder().encode("user123"))
+			.roles("USER")
+			.build();
+	UserDetails admin = User.builder()
+			.username("admin")
+			.password(this.passwordEncoder().encode("admin123"))
+			.roles("USER", "ADMIN")
+			.build();
+	return new InMemoryUserDetailsManager(user, admin);
+}
+
+@Bean
+public PasswordEncoder passwordEncoder() {
+	return new BCryptPasswordEncoder();
+}
+
+-> Role based authentication:
+here, users with role "USER" are authenticated to access /user/** request.
+here, users with role "ADMIN" are authenticated to access /home/** request.
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	http.authorizeHttpRequests(expressionInterceptUrlRegistry ->
+					expressionInterceptUrlRegistry.requestMatchers("/user/**").hasRole("USER")
+							.anyRequest().authenticated()).authorizeHttpRequests(expressionInterceptUrlRegistry ->
+					expressionInterceptUrlRegistry.requestMatchers("/home/**").hasRole("ADMIN")
+							.anyRequest().authenticated())
+			.httpBasic(httpSecurityHttpBasicConfigurer -> {});
+	//http.addFilterAfter(new CustomFilter(), BasicAuthenticationFilter.class);
+	return http.build();
+}
+@Bean
+public UserDetailsService users() {
+	UserDetails user = User.builder()
+			.username("user")
+			.password(this.passwordEncoder().encode("user123"))
+			.roles("USER")
+			.build();
+	UserDetails admin = User.builder()
+			.username("admin")
+			.password(this.passwordEncoder().encode("admin123"))
+			.roles("USER", "ADMIN")
+			.build();
+	return new InMemoryUserDetailsManager(user, admin);
+}
+@Bean
+public PasswordEncoder passwordEncoder() {
+	return new BCryptPasswordEncoder();
+}
+
+-> If we want to let user of some role like "admin" to access controller mapping method
+1. add annotation  @PreAuthorize("hasRole('ADMIN')") in controller
+2. add annotation @EnableMethodSecurity in SecurityConfig.
+
+-> csrf (cross site request forgery)
+is an attack that forces authenticated users to submit a request to a Web application against which they are currently authenticated.
+Without a CSRF token, an attacker could perform actions on the web application that the user
+is authenticated for, such as changing their password or making a purchase, without the user's knowledge or consent.
+when client is not browser then, we can disable the csrf protection through spring.
+
+-> form based authentication
+username password are provided through post method, can logout, cookie session is also created 
+1. Create @controller wih method returning login.html file
+2. add filter for formlogin in method returning securityfilterchain
+.formLogin(form -> form
+.loginPage("/signin")
+.permitAll())
+Note: url used in login page should be same as in contoller requestmapping.
+
+-> Authentication through Database credentials:
+1. take reference of jwt
+
+Intellij shortcuts -> 
+ctrl + n search files
+ctrl+alt +b -> find implementation classes
+alt + insert -> overide methods
+debugging -> add breakpoints -> run as debug and find values
+
+
+OpenAPI refers to the specification used to describe the API, while Swagger Spring Boot provides the tools and integration specifically for Spring Boot projects to visualize the api document.
+Both can also be used for testing and validating API services.
+The OpenAPI Specification, previously known as the Swagger Specification, is a specification for a machine-readable interface definition language for describing, producing, consuming and visualizing web services
+swagger openapi : https://www.youtube.com/watch?v=A_RWUcTqHBI
+
+-------------------------------------------------------------------------------------------------------------------
+Oauth 2.0 (Open authorization)
+It is a standard designed to allow applications and web sites to use resources hosted by other apps on behalf of user.
+
+authorisation protocol to grant access to set of resources, uses access tokens
+authorization server -> recieves requests from client for access tokens and issues required access
+Resource owner       -> user or system that owns the protected resources
+client               -> client has access token to send request to authorization server.
+scope                -> specify reason to access resources 
+resource server      -> contains protected resources.
+
+Grant type:
+-> authorisation code
+flow
+client sends authorization request -> user login with 3rd party app (login with google)-> authorization grant response to client
+client sends authorization grant -> authorization server (for access token) -> returns access token if valid
+client sends access token -> resource server for protected resources -> sends resource access if token valid.
+
+-> client credentials
+flow
+client wants to access resource on behalf of user, sends client credentials -> authorization server -> token
+client sends access token -> resource server for protected resources -> sends resource access if token valid.
+
+-> refresh token
+flow
+client sends token -> resource server -> returns token expired
+client sends new token request with refresh token -> authorization server (for new access token) -> returns new access token if valid
+client sends new access token -> resource server for protected resources -> sends resource access if new token valid.
+
+https://github.com/aliyusahaboadam/OAuth2-App-Spring-Boot-Tutorial/
+Using github as authorisation server
+steps:
+1. https://github.com/settings/applications/new -> add name -> add homepage urls (localhost:port/<servername>/) -> callback url (localhost:port/) -> create
+
+2. generate new client secret -> copy client id and client secret key
+example:
+client id:
+e3b00f8808c39a89dc72
+client secret-key:
+428ed441d80dc60f425076c7e6bf6d80173fb4bb
+
+3. open sts -> create project -> spring starter project -> write name and package -> add dependencies
+(spring web, spring boot dev tools, spring security, oauth2Client, oAuth2 authorization server) -> finish
+
+4. open link https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps
+copy authorization uri -> example: https://github.com/login/oauth/authorize
+copy token uri -> example: https://github.com/login/oauth/access_token
+copy user info uri -> example: https://api.github.com/user
+
+5. create oauth2 configuration class and add method for client registration by adding properties copied in step 2 and 4.
+example:
+private ClientRegistration clientRegistration () {
+return ClientRegistration.withRegistrationId("github")
+ .clientId("e3b00f8808c39a89dc72")
+ .clientSecret("428ed441d80dc60f425076c7e6bf6d80173fb4bb")
+ .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+ .scope("read")
+ .authorizationUri("https://github.com/login/oauth/authorize")
+ .tokenUri("https://github.com/login/oauth/access_token")
+ .userInfoUri("https://api.github.com/user")
+ .userNameAttributeName("id")
+ .clientName("oauth-practice")
+ .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+ .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+ .build();
+ }
+
+Also, add bean for clientRegistrationRepository and SecurityFilterChain
+
+6. Create controller class
+@RestController
+public class oauth2Controller {
+	@GetMapping("/home") 
+	public String home () {
+		return "home";
+	}
+}
+
+7. run project -> http://localhost:<port>/home -> oauth through github
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+To add more than one securityFilterChain present in 2 different configuration, order is set one after another securityFilterChain by @Order(1) and @Order(2) as per order they should be called.
+Example:
+Configuration 1
+@Configuration
+public class OAuth2ServerConfig {
+	
+	@Bean
+	public RegisteredClientRepository registeredClientRepository () {
+		return new InMemoryRegisteredClientRepository(this.registeredClient());
+	}
+	
+	
+	private RegisteredClient registeredClient () {
+	return	RegisteredClient.withId(UUID.randomUUID().toString())
+		.clientId("client")
+		.clientSecret("{noop}secret")
+		.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+		.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+		.redirectUri("http://spring.io")
+		.scope("read")
+		.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+	    .build();
+	}
+	
+	@Bean
+	@Order(1)
+	public SecurityFilterChain authorizationServerSecurityFilterChain (HttpSecurity httpSecurity) throws Exception {
+		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(httpSecurity);
+		httpSecurity.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
+		
+		httpSecurity.exceptionHandling(e -> e.defaultAuthenticationEntryPointFor(
+				new LoginUrlAuthenticationEntryPoint("/login"),
+			new MediaTypeRequestMatcher(MediaType.TEXT_HTML)));
+	return	httpSecurity.build();
+	}
+	
+	@Bean
+	public AuthorizationServerSettings authorizationServerSettings () {
+		return AuthorizationServerSettings.builder().build();
+	} 
+}
+
+Configuration 2
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+	
+	@Bean
+	public UserDetailsService userDetailsService () {
+		UserDetails user = User.withUsername("Aliyu")
+				      .password("{noop}1234")
+				      .authorities("read")
+				      .build();
+		
+		return new InMemoryUserDetailsManager(user);
+	}
+	
+	@Bean
+	@Order(2)
+	public SecurityFilterChain defaultSecurityFilterChain (HttpSecurity http) throws Exception {
+		
+		http.formLogin(Customizer.withDefaults());
+		http.authorizeHttpRequests(request -> request.anyRequest().authenticated());
+		return http.build();
+		
+	}
+	
+	@Bean
+	public JWKSource<SecurityContext> jwkSource () {
+		KeyPair keyPair = generateKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+		
+		RSAKey rsaKey = new RSAKey.Builder(publicKey)
+				         .privateKey(privateKey)
+				         .keyID(UUID.randomUUID().toString())
+				         .build();
+		JWKSet jwkSet = new JWKSet(rsaKey);
+		return new ImmutableJWKSet<>(jwkSet);
+		
+	}
+	
+	
+    private static KeyPair generateKeyPair () {
+		
+		KeyPair keyPair;
+		
+		try {
+			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+			keyPairGenerator.initialize(2048);
+			keyPair = keyPairGenerator.generateKeyPair();
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+		 return keyPair;
+	}
+	  
+	 @Bean
+	 public JwtDecoder jwtDecoder (JWKSource<SecurityContext> jwkSource) {
+		 return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
+	 }
+}
+
+Now, once form is login using credentials user(Aliyu) password(1234), It will ask for oAuth -> allow
+It will redirect to http://spring.io as defined in configuration.
+
+To get access token:
+open postman -> http://localhost:8080/oauth/token -> basic authourisation user(client) password(secret) -> body -> x form encoded with following key values
+key          value
+grant_type   authorization_code
+scope        read
+code         <paste code value from link when redirected to spring.io>
+send request -> access token is recieved.
+

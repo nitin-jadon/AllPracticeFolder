@@ -1,0 +1,83 @@
+Java app deployment o AWS EC2 (Elastic Cloud computing)
+
+Create aws account step 
+Step 1: aws.amazon.com
+Step 2: Complete sign up -> root user -> set email & password
+Step 3: account type -> personal -> add phone no. and other details
+Step 4: card details (Avoid giving exact pan card)  (Note: try to give right card details and no atleast to avoid late minute issues.)
+
+Create ec2 instance
+Step 1: https://aws.amazon.com/console/ -> log back in
+Step 2: sign in -> search "EC2" -> launch instance (which will provide virtual machine by mentioning the type of machine we want)
+Step 3: select ubuntu 64 bits (make sure free tier is available) -> instance type (t2.micro) as it is free tier
+Step 4: create key pair with .pem file -> launch
+Step 5: View all instances -> instance will be running (we can also check from e2c dashboard -> running instance -> running instance visible)
+Step 6: wait till instance state becomes running and can provide name to instance.
+Step 7: we can also create new instances as per our need but we have to keep in mind that we have limited free hours
+Step 8: We also right click on instamce to change state of instance by start/stop.
+
+connect ssh client to ec2
+Step 1:Install gitbash/putty (Note: If we are having mac or linux, then we don't need to install putty or gitbash)
+Step 2:Create new folder at desktop and paste .pem file
+Step 3:Right click at path of .pem file -> git bash here.
+Step 4:Select instance -> connect -> standalone ssh client -> COPY SSH command (ex: ssh -i "key-pair.pem" ubuntu@ec2-13-211-36-31.ap-southeast-2.compute.amazonaws.com)
+Note: ssh command will change as it contains public dns which changes after sometime
+Step 5:if error comes then, change permission of file (ex: chmod 400 "key-pair.pem") and re-execute previous command.
+Step 6:Run commands: 
+       sudo su (for root user)
+       apt-get update (for software update)
+
+install java on ubuntu EC2 instance
+Step 1: google "install openjdk 17 on ubuntu"
+Step 2: copy command to install both jdk and jre (ex: sudo apt-get install openjdk-17-jre openjdk-17-jdk)
+Step 3: checker version by java -version
+Step 4: we can also open jshell (introduced in java9)
+Step 5: Use commands "jshell" to open it and execute commands like (/imports, System.out.println("hey"), String str="string value")
+Step 6: exit jshell by "/exit"
+
+install tomcat 9 on EC2 instance
+Step 1: login EC2 instance and once jdk is installed
+Step 2: chmod -777 /var
+Step 3: mkdir /var/lib/tomcat
+Step 4: cd /var/lib/tomcat
+Step 5: curl -O https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.18/bin/apache-tomcat-10.1.18.tar.gz
+Step 6: sudo tar xzvf apache-tomcat-10.1.18.tar.gz -C /var/lib/tomcat --strip-components=1
+Step 7: sudo /var/lib/tomcat/bin/startup.sh -> start tomcat
+Step 8: sudo /var/lib/tomcat/bin/shutdown.sh
+Step 9: check if tomcat is working -> ec2 dashboard -> elastic IPs -> allocate elastic ip address -> allocate
+Step10: ec2 dashboard -> elastic ip -> click on ip -> associate elastic ip address
+Step11: add ip address and ec2 instance -> associate ip
+Step12: ec2 dashboard -> select running instance -> right bottom (security) -> click on securiy groups -> inbound rules -> edit inbound rules -> add new rule
+Step13: ssh:custom tcp, port:8080, source: anywhere -> save rules
+Step14: open new tab paste <elastic ip address>:8080
+
+Install mysql server on ubuntu ec2 instance
+Step 1: login with ssh command by right click on path where .pem file is present -> git bash here -> sudo su -> apt-get update
+Step 2: Run command -> apt-get install mysql-server -> mysql_secure_installation -> dont remove test results rest can be done no
+Step 3: mysql -u root (for login)
+Step 4: show databases; -> create database mydb; -> show databases;
+Step 5: use mydb;
+
+Create new user mysql:
+Step 1: sudo su -> mysql -u root -> create user 'username'@'%' identified by 'password'; (here. % is used to make it accessible at all host)
+Step 2: grant all privileges on *.* to 'username'@'%';
+Step 3: flush privileges;
+Step 4: exit -> mysql -u <username> -p
+
+FTPclient
+Step 1: sudo su -> cd /var/lib/<tomcat>/webapps/ or cd /opt/tomcat/webapps/
+Step 2: download and install filezilla client
+Step 3: open filezilla -> file -> site manager -> new site -> Protocol: sftp -> host: public ipaddress -> port:22 -> logon type: keyfile -> user: ubuntu -> key file: add .pem file -> ok
+Step 4: Connect with the site with port 22
+Step 5: go to path /var/lib/tomcat/webapps/
+Note : if any of directory is not opening -> chmod 777 <directory path>
+
+War file upload
+Step 1: check the project to uploaded is working on local machine, also update db schema if required.
+Step 2: check configuration file and run project on local.
+Step 3: Once project is running fine on local, update the configuration as per the ubuntu machine like database, username, password, dialect should be as per mysql version in ubuntu.
+Make sure that db, username & password of project is also present in ubuntu as well
+Step 4: right click on project pacakage -> export -> war file if it is web app -> destination -> overwrite existing file
+Step 5: open ftpclient go to path /var/lib/tomcat/webapps/ on right side and on left side the path where war file is present.
+Step 6: right click on war file at local machine -> upload
+Step 7: open web browser -> <public associated ip address>:8080/<project paths>

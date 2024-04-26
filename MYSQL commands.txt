@@ -1,0 +1,395 @@
+3rd highest salary
+SELECT * FROM `employee` ORDER BY `salary` DESC LIMIT 1 OFFSET 2;
+Which orders employees by salary and then tells db to return a single result (1 in LIMIT) counting from third row in result set (2 in OFFSET). It may be OFFSET 3 if your DB counts result rows from 1 and not from 0
+
+SELECT expressions
+FROM tables
+[WHERE conditions]
+[ORDER BY expression
+----------------------------------------------------
+join question
+Table users:
+    user_id (pk, ai)
+    email
+    password
+    last_login
+
+Table data:
+    user_id (fk to users.user_id)
+    data_1
+    data_2
+
+SELECT users.email, users.password, data.data_1, data.data_2 FROM users INNER JOIN data ON users.user_id=data.user_id WHERE users.email='$user_email';
+-----------------------------------------------------
+ACID properties
+The data in RDBMS is stored in database objects called tables. A table is a collection of related data entries and it consists of columns and rows.
+Every table is broken up into smaller entities called fields. (columns)
+A record, also called a row, is each individual entry that exists in a table. (rows)
+----------------------------------------------------
+CREATE TABLE student (
+  id INT PRIMARY KEY,
+  name VARCHAR(50),
+  age INT
+);
+
+INSERT INTO student (id, name, age)
+VALUES (1, 'Shubham Thakur', 18),
+       (2, 'Aman Chopra', 19),
+       (3, 'Bhavika uppala', 20),
+       (4,'Anshi Shrivastava',22);
+------------------------------------------------------
+select rows having distinct columns
+SELECT DISTINCT Country FROM Customers;
+
+count of distinct country
+SELECT COUNT(DISTINCT Country) FROM Customers;
+------------------------------------------------------
+And for another condition
+SELECT *
+FROM Customers
+WHERE Country = 'Spain' AND CustomerName LIKE 'G%'; 
+
+Select all Spanish customers that starts with either "G" or "R":
+
+SELECT * FROM Customers
+WHERE Country = 'Spain' AND (CustomerName LIKE 'G%' OR CustomerName LIKE 'R%');
+
+Select all customers that either:
+are from Spain and starts with either "G", or
+starts with the letter "R":
+
+SELECT * FROM Customers
+WHERE Country = 'Spain' AND CustomerName LIKE 'G%' OR CustomerName LIKE 'R%';
+
+-------------------------------------------------------
+OR
+SELECT *
+FROM Customers
+WHERE Country = 'Spain' OR CustomerName LIKE 'G%'; 
+-------------------------------------------------------
+NOT
+
+SELECT * FROM Customers
+WHERE NOT Country = 'Spain';
+
+Select customers that does not start with the letter 'A':
+
+SELECT * FROM Customers
+WHERE CustomerName NOT LIKE 'A%';
+
+Select customers with a customerID not between 10 and 60:
+
+SELECT * FROM Customers
+WHERE CustomerID NOT BETWEEN 10 AND 60;
+
+Select customers that are not from Paris or London:
+
+SELECT * FROM Customers
+WHERE City NOT IN ('Paris', 'London');
+
+------------------------------------------------------
+SELECT column_names
+FROM table_name
+WHERE column_name IS NOT NULL;
+------------------------------------------------------
+UPDATE -> If you omit the WHERE clause, ALL records will be updated!
+UPDATE Customers
+SET ContactName = 'Alfred Schmidt', City= 'Frankfurt'
+WHERE CustomerID = 1;
+----------------------------------------------------
+DELETE statement is used to delete existing records in a table.
+the table structure, attributes, and indexes will be intact
+
+DELETE Syntax
+DELETE FROM table_name WHERE condition;
+---------------------------------------------------------
+MIN MAX COUNT SUM AVG
+
+SELECT AVG(Price)
+FROM Products WHERE price>4;
+-------------------------------------------------------------
+LIKE
+
+The percent sign % represents zero, one, or multiple characters
+The underscore sign _ represents one, single character
+
+Select all customers that starts with the letter "a":
+
+SELECT * FROM Customers WHERE CustomerName LIKE 'a%';
+----------------------------------------------------------------
+[] Represents any single character within the brackets
+
+Example
+Return all customers starting with either "b", "s", or "p":
+
+SELECT * FROM Customers
+WHERE CustomerName LIKE '[bsp]%';
+
+- characters
+ 
+Example
+Return all customers starting with "a", "b", "c", "d", "e" or "f":
+
+SELECT * FROM Customers
+WHERE CustomerName LIKE '[a-f]%';
+------------------------------------------------------------------
+IN
+
+Return all customers that are NOT from 'Germany', 'France', or 'UK':
+
+SELECT * FROM Customers
+WHERE Country NOT IN ('Germany', 'France', 'UK');
+
+Return all customers that have an order in the Orders table:
+
+SELECT * FROM Customers
+WHERE CustomerID IN (SELECT CustomerID FROM Orders);
+
+----------------------------------------------------------------------
+BETWEEN
+
+The following SQL statement selects all products with a price between 10 and 20
+AND the CategoryID must be either 1,2, or 3:
+
+Example
+SELECT * FROM Products
+WHERE Price BETWEEN 10 AND 20
+AND CategoryID IN (1,2,3);
+
+
+BETWEEN WITH ORDER BY
+SELECT * FROM Products
+WHERE ProductName BETWEEN "Carnarvon Tigers" AND "Chef Anton's Cajun Seasoning"
+ORDER BY ProductName;
+
+----------------------------------------------------------------------
+ALIAS -> AS (AS is optional)
+SELECT CustomerID AS ID, CustomerName AS Customer
+FROM Customers;
+----------------------------------------------------------------------
+JOIN
+
+INNER) JOIN: Returns records that have matching values in both tables
+LEFT (OUTER) JOIN: Returns all records from the left table, and the matched records from the right table
+RIGHT (OUTER) JOIN: Returns all records from the right table, and the matched records from the left table
+FULL (OUTER) JOIN: Returns all records when there is a match in either left or right table
+
+Example:
+SELECT column_name(s)
+FROM table1
+FULL OUTER JOIN table2
+ON table1.column_name = table2.column_name
+WHERE condition;
+------------------------------------------------------------------------
+UNION -> The UNION operator selects only distinct values by default. To allow duplicate values, use UNION ALL
+SELECT column_name(s) FROM table1
+UNION ALL
+SELECT column_name(s) FROM table2;
+------------------------------------------------------------------------
+GROUP BY
+GROUP BY statement groups rows that have the same values into summary rows, like "find the number of customers in each country".
+The GROUP BY statement is often used with aggregate functions (COUNT(), MAX(), MIN(), SUM(), AVG()) to group the result-set by one or more columns.
+
+find the number of customers in each country 
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country;
+
+find the number of customers in each country sorted high to low:
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+ORDER BY COUNT(CustomerID) DESC;
+---------------------------------------------------------------------------
+HAVING -> WHERE can not be used with aggregate functions
+lists the number of customers in each country. Only include countries with more than 5 customers:
+
+Example:
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+HAVING COUNT(CustomerID) > 5;
+
+Lists the number of customers in each country, sorted high to low (Only include countries with more than 5 customers):
+
+Example
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+HAVING COUNT(CustomerID) > 5
+ORDER BY COUNT(CustomerID) DESC;
+----------------------------------------------------------------------------
+
+EXISTS-> returns true if statement returns some records
+returns TRUE and lists the suppliers with a product price less than 20:
+
+Example
+SELECT SupplierName
+FROM Suppliers
+WHERE EXISTS (SELECT ProductName FROM Products WHERE Products.SupplierID = Suppliers.supplierID AND Price < 20);
+----------------------------------------------------------------------------------------------------------------------
+ANY -> returns TRUE if ANY of the subquery values meet the condition
+
+lists the ProductName if it finds ANY records in the OrderDetails table has Quantity equal to 10 (this will return TRUE because the Quantity column has some values of 10):
+
+Example
+SELECT ProductName
+FROM Products
+WHERE ProductID = ANY
+  (SELECT ProductID
+  FROM OrderDetails
+  WHERE Quantity = 10);
+------------------------------------------------------------------------------------
+ALL-> returns TRUE if ALL of the subquery values meet the condition
+
+ProductName if ALL the records in the OrderDetails table has Quantity equal to 10.
+This will of course return FALSE because the Quantity column has many different values (not only the value of 10):
+
+Example
+SELECT ProductName
+FROM Products
+WHERE ProductID = ALL
+  (SELECT ProductID
+  FROM OrderDetails
+  WHERE Quantity = 10);
+----------------------------------------------------------------------------------
+SELECT INTO -> to copy table into new table of another db
+IN clause to copy the table into a new table in another database:
+
+SELECT column1, column2, column3, ...
+INTO newtable [IN externaldb]
+FROM oldtable
+WHERE condition;
+
+SELECT * INTO CustomersBackup2017 IN 'Backup.mdb'
+FROM Customers;
+---------------------------------------------------------------------------------
+INSERT INTO -> to copy table into another table of another db
+Copy "Suppliers" into "Customers" (the columns that are not filled with data, will contain NULL):
+
+INSERT INTO table2 (column1, column2, column3, ...)
+SELECT column1, column2, column3, ...
+FROM table1
+WHERE condition;
+
+INSERT INTO Customers (CustomerName, City, Country)
+SELECT SupplierName, City, Country FROM Suppliers;
+--------------------------------------------------------------------------------
+CASE
+SELECT OrderID, Quantity,
+CASE
+    WHEN Quantity > 30 THEN 'The quantity is greater than 30'
+    WHEN Quantity = 30 THEN 'The quantity is 30'
+    ELSE 'The quantity is under 30'
+END AS QuantityText
+FROM OrderDetails;
+---------------------------------------------------------------------------------
+IFNULL(), ISNULL(), COALESCE(), and NVL() Functions ->
+function lets you return an alternative value if an expression is NULL
+
+SELECT ProductName, UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
+FROM Products;
+---------------------------------------------------------------------------------
+PROCEDURE ->  stored procedure is a prepared SQL code that you can save, so the code can be reused over and over again.
+So, if you have an SQL query that you write over and over again, save it as a stored procedure, and then just call it to execute it.
+
+creates a stored procedure named "SelectAllCustomers" that selects all records from the "Customers" table:
+
+CREATE PROCEDURE SelectAllCustomers
+AS
+SELECT * FROM Customers
+GO;
+
+Execute the stored procedure above as follows:
+EXEC SelectAllCustomers;
+----------------------------------------------------------------------------------
+CREATE DATABASE databasename;
+
+DROP DATABASE databasename;
+
+BACKUP DATABASE databasename
+TO DISK = 'filepath';
+-----------------------------------------------------------------------------------
+DROP is used to delete the table including structure
+DELETE is slow but can delete specific rows but structure is remained, where clause can be used.
+TRUNCATE is used to delete all rows but structure is remained, faster than delete and drop
+
+DROP table tableName;
+TRUNCATE table tablename;
+DELETE FROM tablename WHERE column="value";
+--------------------------------------------------------------------------------------------
+The ALTER TABLE statement is used to add, delete, or modify columns in an existing table.
+
+ALTER TABLE Customers
+ADD Email varchar(255);
+
+ALTER TABLE table_name
+DROP COLUMN column_name;
+
+ALTER TABLE table_name
+RENAME COLUMN old_name to new_name;
+----------------------------------------------------------------------------------------
+CONSTRAINTS
+NOT NULL, PRIMARY KEY, FOREIGN KEY, 
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)
+);
+---------------------------------------------------------------------------------------
+CHECK constraint is used to limit the value range that can be placed in a column.
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CHECK (Age>=18)
+);
+-----------------------------------------------------------------------------------------
+DEFAULT
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    City varchar(255) DEFAULT 'Sandnes'
+);
+------------------------------------------------------------------------------------------
+CREATE INDEX
+CREATE INDEX statement is used to create indexes in tables.
+
+CREATE INDEX idx_pname
+ON Persons (LastName, FirstName);
+
+DROP INDEX table_name.index_name;
+--------------------------------------------------------------------------------------------
+"Personid" column to be an "auto-increment" primary key field in the "Persons" table:
+
+CREATE TABLE Persons (
+    Personid int NOT NULL AUTO_INCREMENT,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    PRIMARY KEY (Personid)
+);
+---------------------------------------------------------------------------------------------
+create VIEW creates virtual table from DB
+CREATE VIEW view_name AS
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;
+----------------------------------------------------------------------------------------------
+Install mysql server on ubuntu ec2 instance
+Step 1: login with ssh command by right click on path where .pem file is present -> git bash here -> sudo su -> apt-get update
+Step 2: Run command -> apt-get install mysql-server -> mysql_secure_installation -> dont remove test results rest can be done no
+Step 3: mysql -u root (for login)
+Step 4: show databases; -> create database mydb; -> show databases;
+Step 5: use mydb;
+
+Create new user mysql:
+Step 1: sudo su -> mysql -u root -> create user 'username'@'%' identified by 'password'; (here. % is used to make it accessible at all host)
+Step 2: grant all privileges on *.* to 'username'@'%';
+Step 3: flush privileges;
+Step 4: exit -> mysql -u <username> -p

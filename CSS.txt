@@ -1,0 +1,2092 @@
+Cascading Style Sheets (CSS) is used to format the layout of a webpage.
+
+Inline
+by using the style attribute inside HTML elements
+<h1 style="color:blue;">A Blue Heading</h1>
+----------------------------------
+
+Internal
+by using a <style> element in the <head> section. Used in single html page
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {background-color: powderblue;}
+h1   {color: blue;}
+p    {color: red;}
+</style>
+</head>
+<body>
+<h1>This is a heading</h1>
+<p>This is a paragraph.</p>
+</body>
+</html>
+--------------------------------
+
+External
+to add style in multiple files
+by using a <link> element to link to an external CSS file
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>This is a heading</h1>
+<p>This is a paragraph.</p>
+</body>
+</html>
+
+styles.css
+body {
+  background-color: powderblue;
+}
+h1 {
+  color: blue;
+}
+p {
+  color: red;
+}
+------------------------------------------------
+border
+p {
+  border: 2px solid powderblue;
+}
+-----------------------------------------
+padding property
+defines a padding (space) between the text and the border.
+p {
+  border: 2px solid powderblue;
+  padding: 30px;
+}
+------------------------------------------------
+margin property defines a margin (space) outside the border.
+p {
+  border: 2px solid powderblue;
+  margin: 50px;
+}
+--------------------------------------------
+Link
+External style sheets can be referenced with a full URL or with a path relative to the current web page.
+<link rel="stylesheet" href="https://www.w3schools.com/html/styles.css">
+---------------------------------------------
+link style
+a:link - a normal, unvisited link
+a:visited - a link the user has visited
+a:hover - a link when the user mouses over it
+a:active - a link the moment it is clicked
+order should be maintained for link, visited, hover & active
+text-decoration: none means not underlined. text-decoration can be overline, underline or both or none
+
+<style>
+a:link {
+  color: green;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: pink;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: red;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: yellow;
+  background-color: transparent;
+  text-decoration: underline;
+}
+</style>
+-------------------------------------------------
+float
+<p><img src="smiley.gif" alt="Smiley face" style="float:right;width:42px;height:42px;">
+The image will float to the right of the text.</p>
+
+<p><img src="smiley.gif" alt="Smiley face" style="float:left;width:42px;height:42px;">
+The image will float to the left of the text.</p>
+----------------------------------------------------
+CSS is used to define styles for your web pages.
+HTML was created to describe the content of a web page
+p {
+  color: red;
+  text-align: center; -> center alignment
+}
+
+Selectors combination
+p.center -> only <p> elements with class="center" will be changed
+
+inline style has the highest priority.
+<h1 style="border:2px solid Tomato;">Hello World</h1>
+-----------------------------------------------------
+background
+div {
+  background-color: green;
+  opacity: 0.3; -> to make color fade/pale
+}
+
+div {
+  background: rgba(0, 128, 0, 0.3) /* Green background with 30% opacity */
+  background-image: url("paper.gif"); 
+}
+
+body {
+  background-color: #ffffff;
+  background-image: url("img_tree.png");
+  background-repeat: no-repeat; /*repeat-x or repeat-y can also be used to repeat horizontally or vertically.
+  background-position: right top;
+  background-attachment: scroll; /* scroll or fixed if you want to scroll the image with scrolling of web page
+  background-size : cover
+}
+
+body {
+  background: #ffffff url("img_tree.png") no-repeat right top;
+}
+
+When using the shorthand property the order of the property values is:
+
+background-color
+background-image
+background-repeat
+background-attachment
+background-position
+
+p.mix {border-style: dotted dashed solid double;}
+-----------------------------------------------------------
+border
+p.one {
+  border-style: solid;
+  border-width: 5px 20px; /* 5px top and bottom, 20px on the sides */
+}
+
+border-style: dotted solid double;
+top border is dotted
+right and left borders are solid
+bottom border is double
+
+p.three {
+  border-style: solid;
+  border-width: 25px 10px 4px 35px; /* 25px top, 10px right, 4px bottom and 35px left */
+}
+
+p.one {
+  border-style: solid;
+  border-color: red green blue yellow; /* red top, green right, blue bottom and yellow left */
+}
+
+p {
+  border-top-style: dotted;
+  border-right-style: solid;
+  border-bottom-style: dotted;
+  border-left-style: solid;
+}
+
+p {
+  border-bottom: 6px solid red; /*shorthand*/
+  border-radius: 5px; /*makae curve at corner*/
+}
+-------------------------------------------------------
+margin to add space outside the borders of elements
+
+p {
+  margin: 25px 50px 75px 100px;
+}
+
+div {
+  width: 300px;
+  margin: auto; /*auto to horizontally center the element within its container.*/
+  border: 1px solid red;
+}
+
+-----
+div {
+  border: 1px solid red;
+  margin-left: 100px;
+}
+
+p.ex1 {
+  margin-left: inherit; /*the left margin of the <p class="ex1"> element be inherited from the parent element (<div>)*/
+}
+----
+Top and bottom margins of elements are sometimes collapsed into a single margin that is equal to the largest of the two margins
+h1 {
+  margin: 0 0 50px 0;
+}
+
+h2 {
+  margin: 20px 0 0 0;
+}
+here h1 has bottom margin 50px, h2 has top margin 20px. overall margin should in vertical should be 70 but it comes out be max of (h1 bottom margin & h2 top margin) = 50px
+-----------------------------------------------------------------
+padding
+div {
+  width: 300px;
+  padding: 25px; /*actual width will be 350px (300px + 25px of left padding + 25px of right padding*/
+}
+
+To avoid unwanted padding box-sizing is used
+div.ex2 {
+  width: 300px;
+  padding: 25px;
+  box-sizing: border-box; /*now overall width = 300px*/
+  background-color: lightblue;
+} 
+
+padding-bottom
+padding-left
+padding-right
+padding-top
+-----------------------------------------------------------------------
+width
+when the browser window is smaller than the width of the element (500px), then it adds scrollbar
+
+max-width should be used
+div {
+  max-width: 500px;
+  height: 100px;
+  background-color: powderblue;
+}
+
+max-height
+max-width
+min-height
+min-width
+------------------------------------------------------------------------
+Box model -> margin, border, padding, content
+
+div {
+  width: 320px;
+  height: 50px;
+  padding: 10px;
+  border: 5px solid gray;
+  margin: 0;
+}
+  320px (width of content area)
++ 20px (left padding + right padding)
++ 10px (left border + right border)
+= 350px (total width)
+
+  50px (height of content area)
++ 20px (top padding + bottom padding)
++ 10px (top border + bottom border)
+= 80px (total height)
+-----------------------------------------------------------------------
+outline -> created outside of border
+does not affects total width of element
+
+outline-style : solid/dashed/etc;
+outline-color : red,etc;
+outline-width : thin/medium/thick/any specified values;
+outline-offset: 15px; /*outline-offset property adds space between an outline and the edge/border of an element*/
+outline
+
+p.ex3 {outline: 5px solid yellow;}
+------------------------------------------------------------------------
+text
+div {
+  text-align: justify; /* every line has equal width, and the left and right margins are straight
+  text-align-last: justify; /* align last line */
+  /*both below properties used to change dir of text*/
+  direction: rtl;
+  unicode-bidi: bidi-override;
+}
+
+align
+img{
+text-align:center;
+}
+
+img.a {
+  vertical-align: baseline; /* put the element on same of text line
+}
+
+img.b {
+  vertical-align: text-top; /* put the element on above of text line
+}
+
+img.c {
+  vertical-align: text-bottom; /* put the element on below of text line
+}
+
+img.d {
+  vertical-align: sub; /* put the element on below of text line
+}
+
+img.e {
+  vertical-align: super; /* put the element on above of text line
+}
+
+text decoration
+h7 {
+  text-decoration: none; /*to stop adding any line on text*/
+}
+h1 {
+  text-decoration: overline;
+}
+
+h2 {
+  text-decoration: line-through; /*cuts the text*/
+}
+
+h3 {
+  text-decoration: underline;
+}
+
+p.ex {
+  text-decoration: overline underline;
+}
+
+p.ex3 {
+  text-decoration-line: underline;
+  text-decoration-color: red;
+  text-decoration-style: wavy/dotted/dashed/solid/etc;
+  text-decoration-thickness: 5px/auto/25%;
+}
+
+p.uppercase {
+  text-transform: uppercase/lowercase/capitalize; /*capitalize is used to have letter with 1st letter capital
+  font-variant: small-caps/normal; /*it lowers all letters
+}
+
+
+p {
+  text-indent: 50px;   /*text-indent adds indentation at start of line*/
+  letter-spacing: 5px; /*spaces between letter */
+  word-spacing: -2px; /*spaces between words*/
+  line-height: 0.8;    /*spaces between lines*/
+  white-space: nowrap; /*wrapping of words is stopped just like in notepad++
+}
+
+blur shadow
+h1 {
+  text-shadow: 2px 2px 5px red;
+}
+------------------------------------------------------------------
+font-family (Georgia and verdana is classic combo to be used)
+body {
+  background-color: black;
+  font-family: Verdana, sans-serif;
+  font-size: 16px;
+  color: gray;  
+}
+
+h1 {
+  font-family: Georgia, serif;
+  font-size: 60px;
+  color: white;
+}
+
+The default text size in browsers is 16px. 1em is 16px
+property should hold several font names as a "fallback" system, to ensure maximum compatibility between browsers/operating systems
+use commony used fonts like verdana, times new roman, arial.
+.p3 {
+  font-family: "Lucida Console", "Courier New", monospace;
+  font-style: normal/italic/oblique;
+  font-weight: bold/normal;
+  font-size: 30px;
+  font-size: 2.5em; /*1 em = 16px*/
+  font-size: 10vw;    /*1vw = 1% of viewport width*/
+}
+
+Use google font
+<head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+<style>
+body {
+  font-family: "Sofia", sans-serif;
+}
+</style>
+</head>
+
+Use multiple google font
+<head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide|Sofia|Trirong">
+<style>
+h1.a {font-family: "Audiowide", sans-serif;}
+h1.b {font-family: "Sofia", sans-serif;}
+h1.c {font-family: "Trirong", serif;}
+</style>
+</head>
+
+font-variant: small-caps/normal; /*it lowers all letters
+---------------------------------------------------------------------------------------------------
+add icons through bootstrap
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+<i class="glyphicon glyphicon-cloud"></i>
+----------------------------------------------------------------------------------------------------
+style link <a>
+<style>
+/* unvisited link */
+a:link {
+  color: red;
+   text-decoration: none;
+   background-color: yellow;	
+}
+
+/* visited link */
+a:visited {
+  color: green;
+   text-decoration: underline;
+}
+
+/* mouse over link */
+a:hover {
+  color: hotpink;
+}
+
+/* selected link */
+a:active {
+  color: blue;
+}
+</style>
+</head>
+<body>
+<p><b><a href="default.asp" target="_blank">This is a link</a></b></p>
+--------------------------------------------------------------------------------
+styling link 
+a:link, a:visited {
+  background-color: #f44336;
+  color: white;
+  padding: 14px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+a:hover, a:active {
+  background-color: red;
+}
+------------------------------------------------------------------------------
+Cursor
+<span style="cursor: auto">auto</span><br>
+<span style="cursor: crosshair">crosshair</span><br>
+<span style="cursor: default">default</span><br>
+<span style="cursor: e-resize">e-resize</span><br>
+<span style="cursor: help">help</span><br>
+<span style="cursor: move">move</span><br>
+<span style="cursor: n-resize">n-resize</span><br>
+<span style="cursor: ne-resize">ne-resize</span><br>
+<span style="cursor: nw-resize">nw-resize</span><br>
+<span style="cursor: pointer">pointer</span><br>
+<span style="cursor: progress">progress</span><br>
+<span style="cursor: s-resize">s-resize</span><br>
+<span style="cursor: se-resize">se-resize</span><br>
+<span style="cursor: sw-resize">sw-resize</span><br>
+<span style="cursor: text">text</span><br>
+<span style="cursor: w-resize">w-resize</span><br>
+<span style="cursor: wait">wait</span>
+----------------------------------------------------------------------------------
+list styles
+ul{
+	list-style-type: upper-roman/none/lower-alpha/circle/square;
+	list-style-image: url('sqpurple.gif');
+	list-style-position: outside; /* outside to separate list (*) mark with text
+	list-style-position: outside; /* inside to align the text and dot verticaly in same line.
+}
+------------------------------------------------------------------------------------
+table, th, td {
+  border: 1px solid;
+  width: 100%;
+  border-collapse: collapse; /* to avoid double border */
+}
+style table elements
+table, td, th {
+  border: 1px solid black;
+}
+---------
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  height: 70px;
+   padding: 15px;
+}
+---------
+horizontal allignment
+td {
+  text-align: center;
+}
+
+vertical alignment
+td {
+  height: 50px;
+  vertical-align: bottom;
+}
+
+bordering at some place
+th, td {
+  border-bottom: 1px solid #ddd;
+}
+
+---------------
+tr:hover {background-color: coral;}
+-------------
+tr:nth-child(even) {background-color: #f2f2f2;}
+-------------
+scroll bar is added if it exceeds table size limit
+<div style="overflow-x: auto;">
+  <table>
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+	</tr>
+   </table>
+</div>
+-------------------------------------------------------------------------
+display
+
+display:none/inline/block/inline-block;   -> hides element
+visibility:hidden -> hides element but takes space
+-----------------------------------------------------------
+position -> static by default
+div.fixed {
+  position: fixed; /* this element is fixed even if scrolled
+  position: sticky; is positioned based on the user's scroll position.
+  position: absolute; /* positioned relative to the nearest positioned ancestor
+  bottom: 0;
+  right: 0;
+  width: 300px;
+  border: 3px solid #73AD21;
+}
+
+-----------------------------------------------------------------------------
+position fixed
+h1 {
+position: fixed;
+top: 50px;
+right: 10px;
+}
+----------------------------------------------------------------------------
+z-index
+An element with greater stack order is always above an element with a lower stack order,
+If two positioned elements overlap each other without a z-index specified,
+the element defined last in the HTML code will be shown on top
+img {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: -1;//  z-index only works on positioned elements (position: absolute, position: relative, position: fixed, or position: sticky) and flex items (elements that are direct children of display: flex elements)
+}
+-------------------------------------------------------------------------------
+overflow property has the following values:
+
+visible - Default. The overflow is not clipped. The content renders outside the element's box
+hidden - The overflow is clipped, and the rest of the content will be invisible
+scroll - The overflow is clipped, and a scrollbar is added to see the rest of the content
+auto - Similar to scroll, but it adds scrollbars only when necessary
+overflow-x: hidden; /* Hide horizontal scrollbar */
+overflow-y: scroll; /* Add vertical scrollbar */
+---------------------------------------------------------------------------------
+float
+div {
+  float: left/right/none/inherit;
+  padding: 15px; 
+}
+
+clear property can have one of the following values:
+
+none - The element is not pushed below left or right floated elements. This is default
+left - The element is pushed below left floated elements
+right - The element is pushed below right floated elements
+both - The element is pushed below both left and right floated elements
+inherit - The element inherits the clear value from its parent
+
+fix to avoid overflow of element contained in another container like image in div
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+-----------------------------------------------------------------------------------
+add elements horizontally
+Method 1: float: left in box
+
+<head>
+<style>
+* {
+  box-sizing: border-box;/* to provide exact box*/
+}
+.box {
+  float: left;
+  width: 33.33%;
+  padding: 50px;
+}
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+</head>
+<body>
+<div class="clearfix">
+  <div class="box" style="background-color:#bbb">
+  <p>Some text inside the box.</p>
+  </div>
+  <div class="box" style="background-color:#ccc">
+  <p>Some text inside the box.</p>
+  </div>
+  <div class="box" style="background-color:#ddd">
+  <p>Some text inside the box.</p>
+  </div>
+</div>
+</body>
+--------
+Method 2: diplay:flex (as data can increase inside container, so we need to have flexible boxes)
+<head>
+<style>
+.flex-container {
+  display: flex;
+  flex-wrap: nowrap;
+  background-color: DodgerBlue;
+}
+
+.flex-container .box {
+  background-color: #f1f1f1;
+  width: 50%;
+  margin: 10px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 30px;
+}
+</style>
+</head>
+<body>
+
+<h1>Flexible Boxes</h1>
+
+<div class="flex-container">
+  <div class="box">Box 1 - This is some text to make sure that the content gets really tall. This is some text to make sure that the content gets really tall.</div>
+  <div class="box">Box 2 - My height will follow Box 1.</div>
+</div>
+
+</body>
+----------
+Method 3: float:left in li
+<head>
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+li {
+  float: left;
+}
+li a {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+li a:hover {
+  background-color: #111;
+}
+.active {
+  background-color: red;
+}
+</style>
+</head>
+<body>
+<ul>
+  <li><a href="#home" class="active">Home</a></li>
+  <li><a href="#news">News</a></li>
+  <li><a href="#contact">Contact</a></li>
+  <li><a href="#about">About</a></li>
+</ul>
+</body>
+
+Method 4:  navigation link using display:inline-block
+<head>
+<style>
+.nav {
+  background-color: yellow; 
+  list-style-type: none;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+.nav li {
+  display: inline-block;
+  font-size: 20px;
+  padding: 20px;
+}
+</style>
+</head>
+<body>
+<ul class="nav">
+  <li><a href="#home">Home</a></li>
+  <li><a href="#about">About Us</a></li>
+  <li><a href="#clients">Our Clients</a></li>  
+  <li><a href="#contact">Contact Us</a></li>
+</ul>
+----------------------------------------------------------
+display: inline, the major difference is that display: inline-block allows to set a width and height on the element.
+Also, with display: inline-block, the top and bottom margins/paddings are respected, but with display: inline they are not.
+Compared to display: block, the major difference is that display: inline-block does not add a line-break after the element, so the element can sit next to other elements.
+
+Alignment
+To align image, set left and right margin to auto and make it into a block element:
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
+}
+or margin: auto
+
+To align right
+.right {
+  float: right;
+  width: 300px;
+  border: 3px solid #73AD21;
+  padding: 10px;
+}
+
+To align vertically middle
+vertical-align: middle;
+
+To align both vertically/horizontally
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  border: 3px solid green; 
+}
+-------------------------------------------------------
+Combinators
+selects all <p> elements inside <div> elements
+div p {
+  background-color: yellow;
+}
+
+selects all <p> elements that are children of a <div> element
+div > p {
+  background-color: yellow;
+}
+
+selects first <p> element that are placed immediately after <div> elements
+div + p {
+  background-color: yellow;
+}
+
+selects all <p> elements that are next siblings of <div> elements, not inside div
+div ~ p {
+  background-color: yellow;
+}
+-------------------------------------------------------------
+display hidden element through hover over another element
+div:hover p
+
+<head>
+<style>
+p {
+  display: none;
+  background-color: yellow;
+  padding: 20px;
+}
+
+div:hover p {
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<div>Hover over this div element to show the p element
+  <p>Tada! Here I am!</p>
+</div>
+</body>
+
+matches any <p> element that is the first child of any element:
+p:first-child {
+  color: blue;
+} 
+
+matches the first <i> element in all <p> elements:
+p i:first-child {
+  color: blue;
+}
+
+matches all <i> elements in <p> elements that are the first child of another element:
+p:first-child i {
+  color: blue;
+}
+
+here, :lang defines the quotation marks for <q> elements with lang="no":
+<head>
+<style>
+q:lang(no) {
+  quotes: "~" "~";
+}
+</style>
+</head>
+<body>
+
+<p>Some text <q lang="no">A quote in a paragraph</q> Some text.</p>
+<p>In this example, :lang defines the quotation marks for q elements with lang="no":</p>
+
+</body>
+
+set the background-color to red, of any <input> element that are in focus.
+input:focus {
+  background-color: red;
+} 
+
+:first-child
+:nth-child
+
+hover except this class
+li a:hover:not(.active) {
+  background-color: red;
+}
+
+to avoid bordering at last element
+li:last-child {
+  border-right: none;
+}
+----------------------------------------------------------------
+pseudo-element -> add style to specific part of element
+::first-line pseudo-element is used to add a special style to the first line of a text.
+this can be applied to block element only.
+p::first-line {
+  color: #ff0000;
+  font-variant: small-caps;
+}
+
+::first-letter pseudo-element is used to add a special style to the first letter of a text.
+this can be applied to block element only.
+p::first-letter {
+  color: #ff0000;
+  font-size: xx-large;
+}
+
+add some content befor some element
+h1::before {
+  content: url(smiley.gif);
+}
+
+h1::after {
+  content: url(smiley.gif);
+}
+
+::marker pseudo-element selects the markers of list items.
+bullet dot point or number will be marked
+
+::marker {
+  color: red;
+  font-size: 23px;
+}
+
+::selection pseudo-element matches the portion of an element that is selected by a user.
+::selection {
+  color: red;
+  background: yellow;
+}
+------------------------------------------------------------------------------
+opacity
+by default image is fade but after hover it becomes dark
+img {
+  opacity: 0.5;
+}
+
+img:hover {
+  opacity: 1.0;
+}
+------------------------------------------------------------------------------
+create opaque box and background image
+<style>
+div.background {
+  background: url(klematis.jpg);
+  background-size : cover;
+  background-attachment: scroll;
+  border: 2px solid black;
+}
+
+div.transbox {
+  margin: 30px;
+  background-color: #ffffff;
+  border: 1px solid black;
+  opacity: 0.6;
+}
+
+div.transbox p {
+  margin: 5%;
+  font-weight: bold;
+  color: #000000;
+}
+</style>
+</head>
+<body>
+
+<div class="background">
+  <div class="transbox">
+    <p>This is some text that is placed in the transparent box.</p>
+  </div>
+</div>
+
+</body>
+--------------------------------------------------------------------------------
+navigation
+1. vertical display:block
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+li
+{
+  display: block;
+}
+
+li a {
+  
+  width: 60px;
+  background-color: #dddddd;
+}
+
+2. horizontal display: inline-block
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+li
+{
+  display: inline-block;
+}
+
+li a {
+  
+  width: 60px;
+  background-color: #dddddd;
+}
+
+3. vertical fixed nav display:block
+<style>
+body
+{
+margin:0;
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 25%;
+  height:100%;
+  background-color: #f1f1f1;
+  border: 1px solid #555;
+  position:fixed;
+  overflow:auto;
+}
+li a {
+  display: block;
+  color: #000;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+li {
+  text-align: center;
+  
+}
+li:last-child {
+  border-bottom: none;
+}
+
+li a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+li a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+</style>
+</head>
+<body>
+<ul>
+  <li><a class="active" href="#home">Home</a></li>
+  <li><a href="#news">News</a></li>
+  <li><a href="#contact">Contact</a></li>
+  <li><a href="#about">About</a></li>
+</ul>
+<div style="margin-left:25%; padding:10px;">
+<h2>Vertical Navigation Bar</h2>
+<p>In this example, we center the navigation links and add a border to the navigation bar.</p>
+<h2>Vertical Navigation Bar</h2>
+<p>In this example, we center the navigation links and add a border to the navigation bar.</p>
+<h2>Vertical Navigation Bar</h2>
+<p>In this example, we center the navigation links and add a border to the navigation bar.</p>
+<h2>Vertical Navigation Bar</h2>
+<p>In this example, we center the navigation links and add a border to the navigation bar.</p>
+<h2>Vertical Navigation Bar</h2>
+<p>In this example, we center the navigation links and add a border to the navigation bar.</p>
+</div>
+</body>
+4. horizontal float:left
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+li {
+  float: left;
+}
+li a {
+  display: inline-block;
+  padding: 8px;
+  background-color: #dddddd;
+}
+</style>
+5. nav bar fixed at top
+ul {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+6. nav bar fixed at bottom
+ul {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+7. sticky nav bar
+ul {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+}
+8. responsive top nav
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {margin: 0;}
+
+ul.topnav {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+ul.topnav li {float: left;
+}
+
+ul.topnav li a {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+ul.topnav li a:hover:not(.active) {background-color: #111;}
+
+ul.topnav li a.active {background-color: #04AA6D;}
+
+ul.topnav li.right {float: right;}
+@media screen and (max-width: 600px) {
+  ul.topnav li.right, 
+  ul.topnav li {float: none;} /*from both float is removed*/
+}
+</style>
+</head>
+<body>
+<ul class="topnav">
+  <li><a class="active" href="#home">Home</a></li>
+  <li><a href="#news">News</a></li>
+  <li><a href="#contact">Contact</a></li>
+  <li class="right"><a href="#about">About</a></li>
+</ul>
+
+9. responsive side nav
+@media screen and (max-width: 900px) {
+  ul.sidenav {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  ul.sidenav li a {
+    float: left;
+    padding: 15px;
+  } 
+  div.content {margin-left: 0;}
+}
+10. drop down in nav bar
+<style>
+body {
+  background-color:white;
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #38444d;
+}
+
+li {
+  float: left;
+}
+
+li a, .dropbtn {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: red;
+}
+
+li.dropdown {
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1;}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<ul>
+  <li><a href="#home">Home</a></li>
+  <li><a href="#news">News</a></li>
+  <li class="dropdown">
+    <a href="javascript:void(0)" class="dropbtn">Dropdown</a>
+    <div class="dropdown-content">
+      <a href="#">Link 1</a>
+      <a href="#">Link 2</a>
+      <a href="#">Link 3</a>
+    </div>
+  </li>
+</ul>
+12. dropdown simple
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+</style>
+</head>
+<body>
+<div class="dropdown">
+  <span>Mouse over me</span>
+  <div class="dropdown-content">
+  <p>Hello World!</p>
+  </div>
+</div>
+13. left and right side dropdown
+ https://www.w3schools.com/css/tryit.asp?filename=trycss_dropdown_right
+--------------------------------------------------------------------------
+gallery
+<div class="gallery">
+  <a target="_blank" href="img_5terre.jpg">
+    <img src="img_5terre.jpg" alt="Cinque Terre" width="600" height="400">
+  </a>
+  <div class="desc">Add a description of the image here</div>
+</div>
+<div class="gallery">
+  <a target="_blank" href="img_forest.jpg">
+    <img src="img_forest.jpg" alt="Forest" width="600" height="400">
+  </a>
+  <div class="desc">Add a description of the image here</div>
+</div>
+<div class="gallery">
+  <a target="_blank" href="img_lights.jpg">
+    <img src="img_lights.jpg" alt="Northern Lights" width="600" height="400">
+  </a>
+  <div class="desc">Add a description of the image here</div>
+</div>
+<div class="gallery">
+  <a target="_blank" href="img_mountains.jpg">
+    <img src="img_mountains.jpg" alt="Mountains" width="600" height="400">
+  </a>
+  <div class="desc">Add a description of the image here</div>
+</div>
+------------------------------------------------------------------------------
+responsive gallery style
+.responsive {
+  padding: 0 6px;
+  float: left;
+  width: 24.99999%;
+}
+
+@media only screen and (max-width: 700px) {
+  .responsive {
+    width: 49.99999%;
+    margin: 6px 0;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .responsive {
+    width: 100%;
+  }
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+----------------------------------------------------------------------------------
+image sprites
+<img id="home" src="img_trans.gif"> - Only defines a small transparent image because the src attribute cannot be empty. The displayed image will be the background image we specify in CSS
+width: 46px; height: 44px; - Defines the portion of the image we want to use
+background: url(img_navsprites.gif) 0 0; - Defines the background image and its position (left 0px, top 0px)
+-----------------------------------------------------------------------------------
+attribute selector
+a[target="_blank"] {
+  background-color: yellow;
+}
+------------
+here all titles with containing space separated flower value are styled
+<style>
+[title~="flower"] {
+  border: 5px solid yellow;
+}
+</style>
+</head>
+<body>
+
+<h2>CSS [attribute~="value"] Selector</h2>
+<p>All images with the title attribute containing the word "flower" get a yellow border.</p>
+
+<img src="klematis.jpg" title="klematis flower" width="150" height="113">
+<img src="img_flwr.gif" title="flower" width="224" height="162">
+------------------
+[attribute|="value"] selector is used to select elements with the specified attribute.
+The value has to be a whole word, either alone, like class="top", or followed by a hyphen( - ), like class="top-text"
+[class|="top"] {
+  background: yellow;
+}
+top-view, top will be selected but not topview
+---------------
+[attribute]	        [target]	            Selects all elements with a target attribute
+[attribute=value]	[target="_blank"]	    Selects all elements with target="_blank"
+[attribute~=value]	[title~="flower"]	    Selects all elements with a title attribute that contains a space-separated list of words, one of which is "flower"
+[attribute|=value]	[lang|="en"]	        Selects all elements with a lang attribute value starting with "en"
+[attribute^=value]	a[href^="https"]	    Selects all <a> elements with a href attribute value starting with "https"
+[attribute$=value]	a[href$=".pdf"]	        Selects all <a> elements with a href attribute value ending with ".pdf"
+[attribute*=value]	a[href*="w3schools"]	Selects all <a> elements with a href attribute value containing the substring "w3schools"
+---------------------
+we can use pseudo class to focus in attributes
+
+input[type=text]:focus {
+  background-color: lightblue;
+}
+-------------------------------------------------------
+transition property time of animation and property name
+div {
+  width: 100px;
+  height: 100px;
+  background: red;
+  transition: width 2s, height 4s;
+}
+
+div:hover {
+  width: 300px;
+  height: 300px;
+}
+----------
+different transitions
+div {
+  width: 100px;
+  height: 100px;
+  background: red;
+  transition: width 2s;
+  transition-delay: 1s; -> delay transition
+}
+
+#div1 {transition-timing-function: linear;}
+#div2 {transition-timing-function: ease;}
+#div3 {transition-timing-function: ease-in;}
+#div4 {transition-timing-function: ease-out;}
+#div5 {transition-timing-function: ease-in-out;}
+
+div:hover {
+  width: 300px;
+}
+------------
+rotate transition through transform
+div {
+  width: 100px;
+  height: 100px;
+  background: red;
+  transition: width 2s, height 2s, transform 2s;
+}
+
+div:hover {
+  width: 300px;
+  height: 300px;
+  transform: rotate(180deg);
+}
+-----------------------------------------
+transition	A shorthand property for setting the four transition properties into a single property
+transition-delay	Specifies a delay (in seconds) for the transition effect
+transition-duration	Specifies how many seconds or milliseconds a transition effect takes to complete
+transition-property	Specifies the name of the CSS property the transition effect is for
+transition-timing-function	Specifies the speed curve of the transition effect
+div {
+  transition-property: width;             
+  transition-duration: 2s;
+  transition-timing-function: linear;
+  transition-delay: 1s;
+}
+---------------------------------------------------------------------
+counter reset and print
+method 1
+<style>
+body {
+  counter-reset: section;
+}
+h2::before {
+  counter-increment: section;
+  content: "Section " counter(section) ": ";
+}
+</style>
+</head>
+<body>
+<h1>Using CSS Counters</h1>
+<h2>HTML Tutorial</h2>
+<h2>CSS Tutorial</h2>
+<h2>JavaScript Tutorial</h2>
+<h2>Python Tutorial</h2>
+<h2>SQL Tutorial</h2>
+</body>
+
+Method 2
+<style>
+body {
+  counter-reset: section;
+}
+h1 {
+  counter-reset: subsection;
+}
+h1::before {
+  counter-increment: section;
+  content: "Section " counter(section) ". ";
+}
+h2::before {
+  counter-increment: subsection;
+  content: counter(section) "." counter(subsection) " ";
+}
+</style>
+</head>
+<body>
+<h1>HTML/CSS Tutorials</h1>
+<h2>HTML</h2>
+<h2>CSS</h2>
+<h2>Bootstrap</h2>
+<h2>W3.CSS</h2>
+<h1>Scripting Tutorials</h1>
+<h2>JavaScript</h2>
+<h2>jQuery</h2>
+<h2>React</h2>
+<h1>Programming Tutorials</h1>
+<h2>Python</h2>
+<h2>Java</h2>
+<h2>C++</h2>
+</body>
+
+-----------------------------------------------------
+vh and vw should be used	
+vw	Relative to 1% of the width of the viewport*	
+vh	Relative to 1% of the height of the viewport*
+-------------------------------------------------------
+priority of selectors
+inline style > id > class > element
+Inline styles - Example: <h1 style="color: pink;">
+IDs - Example: #navbar
+Classes, pseudo-classes, attribute selectors - Example: .test, :hover, [href]
+Elements and pseudo-elements - Example: h1, ::before
+
+To increase priority of element !important is used, will override all other priorities of styling
+p {
+  background-color: red !important;
+}
+
+----------------------------------------------------------
+css functions
+calc()	Allows you to perform calculations to determine CSS property values
+max()	Uses the largest value, from a comma-separated list of values, as the property value
+min()	Uses the smallest value, from a comma-separated list of values, as the property value
+
+#div1 {
+  background-color: yellow;
+  height: 100px;
+  width: min(50%, 300px);
+}
+-------------------------------------------------------------
+border-radius
+border-bottom-left-radius
+border-top-left-radius
+border-bottom-right-radius
+border-top-right-radius
+Elliptical border - border-radius: 50px / 15px:
+#rcorners1 {
+  border-radius: 50px / 15px;
+  background: #73AD21;
+  padding: 20px; 
+  width: 200px;
+  height: 150px; 
+}
+Elliptical border - border-radius: 15px / 50px:
+#rcorners2 {
+  border-radius: 15px / 50px;
+  background: #73AD21;
+  padding: 20px; 
+  width: 200px;
+  height: 150px; 
+}
+Ellipse border - border-radius: 50%:
+#rcorners3 {
+  border-radius: 50%;
+  background: #73AD21;
+  padding: 20px; 
+  width: 200px;
+  height: 150px;
+}
+border-radius: 15px 50px 30px; (first value applies to top-left corner, second value applies to top-right and bottom-left corners, and third value applies to bottom-right corner
+border-radius: 15px 50px; (first value applies to top-left and bottom-right corners, and the second value applies to top-right and bottom-left corners)
+
+#borderimg {
+  border: 10px solid transparent;
+  padding: 15px;
+  border-image: url(border.png) 30 stretch;
+}
+-------------------------------------------------------------------
+Make sure that img2.gif is displayed on top of img1.gif.
+
+body {
+  background-image: url('img2.gif'), url('img1.gif');
+}
+
+color
+#p1 {background-color: rgba(255, 0, 0, 0.3);}  /* red with opacity 0.3*/
+#p1 {background-color: hsl(120, 100%, 50%);}  /* green */
+#p1 {background-color: hsla(120, 100%, 50%, 0.3);}  /* green with opacity 0.3*/
+#p1 {background-color: rgb(255,0,0);opacity:0.6;} 
+---------------------------------------------------------------------
+keywords
+1. transparent
+div {
+  background-color: transparent;
+}
+2. currentcolor
+div {
+  color: blue;
+  border: 10px solid currentcolor; /* holds current color of element*/
+}
+3. inherit
+div {
+  border: 2px solid red;
+}
+span {
+  border: inherit; /* inherit value from parent */
+}
+4. 
+---------------------------------------------------------------------
+box-shadow
+div {
+  box-shadow: 0px 0px 15px currentcolor;
+  border: 5px solid currentcolor;
+}
+-----------------------------------------------------------------------
+gradient
+linear-gradient
+radial-gradient
+conic-gradient
+
+#grad {
+  background-image: linear-gradient(red, yellow);
+}
+
+#grad {
+  background-image: linear-gradient(to right, red , yellow);
+}
+diagonal
+#grad {
+  background-image: linear-gradient(to bottom right, red, yellow);
+}
+
+#grad {
+  background-image: linear-gradient(180deg, red, yellow);
+}
+multiple
+#grad {
+  background-image: linear-gradient(red, yellow, green);
+}
+
+#grad {
+  background-image: linear-gradient(to right, red,orange,yellow,green,blue,indigo,violet);
+}
+
+using percentage of color
+#grad {
+  background-image: repeating-linear-gradient(red, yellow 10%, green 20%);
+}
+
+#grad {
+  background-image: radial-gradient(red, yellow, green);
+}
+
+shape
+#grad {
+  background-image: radial-gradient(circle, red, yellow, green);
+}
+
+#grad {
+  background-image: repeating-radial-gradient(red, yellow 10%, green 15%);
+}
+conic-gradient
+#grad {
+  background-image: conic-gradient(red 0deg, red 90deg, yellow 90deg, yellow 180deg, green 180deg, green 270deg, blue 270deg);
+  border-radius: 50%;
+}
+
+#grad {
+  background-image: conic-gradient(at 60% 45%, red, yellow, green);
+}
+
+#grad {
+  background-image: repeating-conic-gradient(red 10%, yellow 20%);
+  border-radius: 50%;
+}
+--------------------------------------------------------------------------------
+text-shadow
+h1 {
+  text-shadow: 2px 2px;
+  text-shadow: 2px 2px red; /*add color to shadow*/
+  text-shadow: 2px 2px 5px red;/*add a blur effect to the shadow*/
+  text-shadow: 0 0 3px #FF0000, 0 0 5px #0000FF; /*multiple shadows*/
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; /*border around text
+
+}
+
+card
+div.card {
+  width: 250px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-align: center;
+}
+
+box-shadow
+div {
+  box-shadow: 10px 10px 5px lightblue;/*blur effect*/
+  box-shadow: 10px 10px lightblue;/*specify color*/
+}
+-----------------------------------------------------------------------------------
+text-overflow
+p.test1 {
+  white-space: nowrap;
+  width: 200px;
+  border: 1px solid #000000;
+  overflow: hidden;
+  text-overflow: clip; /*clip/ellipsis*/
+  }
+word wrap 
+p {
+  word-wrap: break-word;
+  word-break: keep-all; /*break-all can also be used. keep all with break thorugh hyphen
+}
+writing mode
+p.test1 {
+  writing-mode: horizontal-tb;
+}
+
+span.test2 {
+  writing-mode: vertical-rl;
+}
+----------------------------------------------------------------------------------------
+With CSS, websites can use fonts other than the pre-selected "web-safe" fonts through @font-face
+@font-face {
+  font-family: myFirstFont;
+  src: url(sansation_bold.woff);
+  font-weight: bold;
+}
+------------------------------------------------------------------------------------------
+transform is to shift or rotate container
+div {
+  transform: rotate(20deg);
+}
+
+2d transform
+div {
+  transform: translate(50px, 100px); /*shift element 50 px to riight and 100 to down*/
+  transform: scale(2, 3); /*horzinatal increase 2times, vertical 3times
+  transform: scaleX(2);   /*increase x axis 2 times
+  transform: skewX(20deg); /*turn/skews 
+  transform: skew(20deg, 10deg);
+  transform: matrix(1, -0.3, 0, 1, 0, 0); /*matrix(scaleX(), skewY(), skewX(), scaleY(), translateX(), translateY())*/
+}
+
+3d transform
+#myDiv {
+  transform: rotateX(150deg);
+  transform: rotateY(150deg);
+  transform: rotateZ(90deg);
+}
+
+-------------------------------------------------------------------------------------------------
+animation lets an element gradually change from one style to another.
+<style>
+div {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  animation-name: example;
+  animation-duration: 4s;
+}
+
+@keyframes example {
+  from {background-color: red;}
+  to {background-color: yellow;}
+}
+</style>
+
+ex 2:
+<style> 
+div {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  position: relative;
+  animation-name: example;
+  animation-duration: 4s; /*duration of animation*/
+  animation-iteration-count: 2; /*how many times animation should happens*/or infinite
+  animation-direction: alternate-reverse;  /*reverse/ alternate / alternate-reverse direction of animation*/
+  animation-timing-function: ease-in-out;  /*linear/ease-in/ease-out/ease*/
+  animation-fill-mode: forwards; /*backwards/forwards/both to retain the style properties of end part*/
+} 
+
+@keyframes example {
+  0%   {background-color:red; left:0px; top:0px;}
+  25%  {background-color:yellow; left:200px; top:0px;}
+  50%  {background-color:blue; left:200px; top:200px;}
+  75%  {background-color:green; left:0px; top:200px;}
+  100% {background-color:red; left:0px; top:0px;}
+}
+</style>
+-------------------------------------------------------------------------------------
+tooltip
+tooltip with arrow
+<style>
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -60px;
+}
+//below pseudo element is used to add arrow in tooltip
+center the arrow.
+Note: The border-width property specifies the size of the arrow. If you change this, also change the margin-left value to the same. This will keep the arrow centered.
+The border-color is used to transform the content into an arrow. We set the top border to black, and the rest to transparent. If all sides were black, you would end up with a black square box.
+.tooltip .tooltiptext::after {/*bottom arrow*/
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+</style>
+<body style="text-align:center;">
+<div class="tooltip">Hover over me
+  <span class="tooltiptext">Tooltip text</span>
+</div>
+ex 2 top arrow
+.tooltip .tooltiptext::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;  /* At the top of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+}
+left arrow:
+  top: 50%;
+  right: 100%; /* To the left of the tooltip */
+ex 3: opacity change of tooltip while hover
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+  
+  /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+-------------------------------
+responsive image 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+centered image
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+-----------------------
+polaroid image
+div.polaroid {
+  width: 80%;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+img {width: 100%}
+
+div.container {
+  text-align: center;
+  padding: 10px 20px;
+}
+
+black and white image
+img {
+  filter: grayscale(100%);
+}
+----------------------
+flip image
+img:hover {
+  transform: scaleX(-1);
+}
+------------------------
+responsive image cards
+<style>
+div.gallery {
+  border: 1px solid #ccc;
+}
+
+div.gallery:hover {
+  border: 1px solid #777;
+}
+
+div.gallery img {
+  width: 100%;
+  height: auto;
+}
+
+div.desc {
+  padding: 15px;
+  text-align: center;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.responsive {
+  padding: 0 6px;
+  float: left;
+  width: 24.99999%;
+}
+
+@media only screen and (max-width: 700px) {
+  .responsive {
+    width: 49.99999%;
+    margin: 6px 0;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .responsive {
+    width: 100%;
+  }
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+------------------
+image reflectioin
+img {
+  -webkit-box-reflect: below 20px;
+}
+-----------------------------------------------
+object-fit
+.fill {object-fit: fill;}
+.contain {object-fit: contain;}
+.cover {object-fit: cover;}
+.scale-down {object-fit: scale-down;}/shortest size of image
+.none {object-fit: none;}
+
+img {
+  width: 200px;
+  height: 300px;
+  object-fit: cover;
+  object-position: 15% 100%;/*Specifies how an <img> or <video> should be positioned with x/y coordinates inside its "own content box"*/
+}
+
+mask image at the back 
+mask-image	Specifies an image to be used as a mask layer for an element
+<body>
+<style>
+.mask1 {
+  -webkit-mask-image: url(w3logo.png);
+  mask-image: url(w3logo.png);
+}
+</style>
+</head>
+<body>
+<div class="mask1">
+<img src="img_5terre.jpg" alt="Cinque Terre" width="600" height="400">
+</div>
+<h3>Original image:</h3>
+<img src="img_5terre.jpg" alt="Cinque Terre" width="600" height="400">
+</body>
+--------------------------------------
+button style
+.button1 {font-size: 10px;}
+-------
+button hover
+.button {
+  transition-duration: 0.4s;
+}
+
+.button:hover {
+  background-color: #04AA6D; /* Green */
+  color: white;
+}
+-------
+box shadow
+.button1 {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+disabled button
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+--------------
+pagination
+<style>
+.pagination {
+  display: inline-block;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+
+.pagination a.active {
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 5px;
+}
+
+.pagination a:hover:not(.active) {
+  background-color: #ddd;
+  border-radius: 5px;
+}
+</style>
+</head>
+<body>
+
+<h2>Rounded Active and Hover Buttons</h2>
+
+<div class="pagination">
+  <a href="#">&laquo;</a>
+  <a href="#">1</a>
+  <a href="#" class="active">2</a>
+  <a href="#">3</a>
+  <a href="#">4</a>
+  <a href="#">5</a>
+  <a href="#">6</a>
+  <a href="#">&raquo;</a>
+</div>
+-------
+arrows in page
+.pagination {
+  display: inline-block;
+}
+<div class="pagination">
+  <a href="#">❮</a>
+  <a href="#">❯</a>
+</div>
+-----------------------------------
+column
+div {
+  column-count: 3;
+  column-gap: 40px;
+  column-rule-style: solid;
+  column-rule-width: 1px;
+  column-rule-color: lightblue;
+  column-span: all;/merge columns for element
+}
+
+----------------------------------------------------------
+resize by user
+div {
+  border: 2px solid;
+  padding: 20px; 
+  width: 300px;
+  resize: horizontal;
+  overflow: auto;
+}
+----------------------------------------------------------
+outline -> create borders after the margin
+outline-offset -> space between borer and outline
+<style> 
+div.ex1 {
+  margin: 20px;
+  border: 1px solid black;
+  outline: 4px solid red;
+  outline-offset: 15px;
+} 
+--------------------------------------------------------
+global variable by :root
+:root {
+  --blue: #1e90ff;
+  --white: #ffffff;
+}
+
+body { background-color: var(--blue); }
+-------
+local variable overiding global
+:root {
+  --blue: #1e90ff;
+  --white: #ffffff;
+}
+
+button {
+  --blue: #0000ff; /* local variable will override global */
+  background-color: var(--white);
+  color: var(--blue);
+  border: 1px solid var(--blue);
+  padding: 5px;
+}
+--------
+
+button {
+  --button-blue: #0000ff; /* new local variable */
+  background-color: var(--white);
+  color: var(--button-blue);
+  border: 1px solid var(--button-blue);
+  padding: 5px;
+}
+----------------------------------------------
+box-sizing: border-box; on an element, padding and border are included in the width and height:
+* {
+  box-sizing: border-box;
+}
+-------------------------------------------------------------------
+media queries
+<link rel="stylesheet" media="screen and (min-width: 701px) and (max-width: 900px)" href="example2.css">
+Or
+@media screen and (min-width: 480px) {
+  body {
+    background-color: lightgreen;
+  }
+}
+
+
+Ex2
+@media screen and (max-width: 600px) {
+  div.example {
+    display: none;
+  }
+}
+---------------------------------------------------------------------------
+flexbox

@@ -1,0 +1,178 @@
+Junit   : unit testing framework for the Java programming language.
+Mockito : framework helps in the development of testable applications. You use Java Reflection API internally to generate mock objects
+
+Setup for junit 4
+intellij -> file -> new -> project -> maven archetype -> location/name/groupID/Artifact/ -> archetype (maven-quickstart)
+add junit maven dependencies 4.12 -> create service class file and write methods to be tested
+public class Service {
+    public int add(int a, int b)
+    {
+        return a+b;
+    }
+
+    public int subtract(int a, int b)
+    {
+        return a-b;
+    }
+    public int multiply(int a, int b)
+    {
+        return a*b;
+    }
+    public int divide(int a, int b)
+    {
+        return a/b;
+    }
+    public int addAny(int ...a)
+    {
+        int s = 0;
+        for(int num:a)
+        {
+            s+=num;
+        }
+        return s;
+    }
+}
+
+Create test File with <classname>Test.class and write methods with name <methodName>Test.class with @Test
+public class ServiceTest {
+    @Test
+    public void addTest()
+    {
+
+        int result = CalculatorService.add(10, 15);
+        int expected = 25;
+        Assert.assertEquals(expected, result);
+    }
+}
+------------------------------------------------------------------
+Note: we can also add timeout in @Test(Timeout = 5000) (Its in millis, if test takes time greater than timeout, test case fails)
+-----------------------------------------------------------------
+4 annotations in junit4 - BeforeClass, Before, AfterClass, After
+@BeforeClass used in test class for logic that should be run before running any testcase like db configuration. method should be static.
+@AfterClass used in test class for logic that should be run after running any testcase like cleanup. method should be static.
+@Before used in method which needs to be executed before each testcase.
+@After used in method which needs to be executed after each testcase.
+ 
+@BeforeClass
+public static void init()
+{
+	System.out.println("testcase started: " + new Date());
+}
+
+@Test
+public void addTest()
+{
+
+	int result = CalculatorService.add(10, 15);
+	int expected = 25;
+	Assert.assertEquals(expected, result);
+}
+
+@AfterClass
+public static void cleanup()
+{
+	System.out.println("testcase terminated: " + new Date());
+}
+
+@Before
+public void beforeEachTest()
+{
+	System.out.println(counter);
+	counter = 0;
+}
+
+@After
+public void afterEachTest()
+{
+	System.out.println(counter);
+	counter = 0;
+}
+
+-----------------------------------------------------------------------
+Junit5 = junit platform          +         junit jupiter            +        junit vintage
+         test engine api             test engine implementation           support junit3\junit4 backward compatibility
+		                            provides additional annotation
+
+Add dependencies: junit-jupiter-params, junit-jupiter-api, junit-jupiter-engine
+We do not need testSuite in main test class for junit5.
+
+Test example: 
+Assert.assertEquals -> Assertions.assertEquals
+@BeforeClass        -> @BeforeAll
+@Before             -> @BeforeEach
+@AfterClass         -> @AfterAll
+@After              -> @AfterEach
+@Ignore             -> @Disabled  for disabling testcase to not to be executed. 
+@Test
+public void addTest()
+{
+	int result = CalculatorService.addAny(3, 4, 9);
+	int expected = 17;
+	Assertions.assertEquals(expected, result, "test failed");
+}
+------------------------
+Assertions -> validate two objects
+
+To verify array length & data are same : Assertions.assertArrayEquals
+int[] arr1 = {1, 5, 7};
+int[] arr2 = {1, 5, 7};
+Assertions.assertArrayEquals(arr2, arr1);
+
+To verify both objects are same with address & data : Assertions.assertSame
+To verify method is returning correct exception : Assertions.assertThrows
+To verify all elements are at right index in 2 collection: Assertions.assertIterableEquals
+List<Integer> list1 = List.of(1, 2, 3, 4);
+List<Integer> list2 = List.of(1, 2, 3, 4);
+Assertions.assertIterableEquals(list1, list2);
+
+Assertions.assertTrue and Assertions.assertNull are used for boolean true & null verification respectively.
+----------------------------------------------------------------------------------------------------
+SpringBoot junits
+1. Create project -> add dependencies: spring web, spring jpa, sql driver (Note: starter-test is auto added in pom.xml)
+2. Create project with repo, service, controller, entity
+3. ctrl+shift+t on repo method to test its functionality -> create test case
+4. Test class should have @SpringBootTest
+Note: method which we want to test -> select the method -> ctrl+shift+t -> add test case in that test class.
+@SpringBootTest
+class PersonRepositoryTest {
+
+    @Autowired
+    private PersonRepository personRepository;
+    @Test
+    void isPersonExistsByIdTest() {
+
+        Person person = new Person(123, "rajesh", "delhi");
+        this.personRepository.save(person);
+        Boolean isTrue = personRepository.isPersonExistsById(123);
+        Assertions.assertTrue(isTrue);
+    }
+}
+Mockito -> to create fake data/scenarios for mocking
+@Mock should be used on class references which data is not to be tested.
+If we want to test one class method which is autowired with another class, then that another class can be mocked as we only want to do testing of first class.
+@SpringBootTest
+@ExtendWith(MockitoExtension.class)//this should also be added for mocking data
+class PersonServiceTest {
+
+    @Mock
+    private PersonRepository repository;
+
+    private PersonService service;
+    @BeforeEach
+    public void setup()
+    {
+        this.service = new PersonService(repository);
+    }
+    @Test
+    void getAllPersons() {
+
+        service.getAllPersons();
+        verify(repository).findAll();
+    }
+}
+Note: the class which is mocked should be passed by paramaterized constructor in main class.
+example:
+public PersonService(PersonRepository repo)
+{
+	this.personRepository = repo;
+}

@@ -1,0 +1,256 @@
+Graphql spring boot
+
+graphql is query language.
+
+Internal api drawback:
+If we have created one getapi
+books
+{
+id
+title
+author
+publish
+}
+If we want to use getApi to provide only id and title then, we have to create another getApi to provide id and title only.
+
+GraphQl
+It helps to provide only specific properties which are required by client.
+so if we have structure of 
+books
+{
+id
+title
+author
+publish
+}
+
+and user wants to get only id or only id, title or any other grouping
+then, graphql can help to get data as per user's requirement.
+
+Note: to get data, we use queryMapping. To create data, we use mutation in graphql.
+project 1: graphql, h2, spring boot
+
+-> H2 database
+	step 1:
+	application.properties config
+
+	server.port=8009
+	spring.application.name=GraphQlAndH2Database
+	spring.h2.console.enabled=true
+	spring.datasource.url=jdbc:h2:mem:testdb
+	spring.datasource.driver-class-name=org.h2.Driver
+	spring.datasource.username=sa
+	spring.datasource.password=admin
+	spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+	spring.jpa.hibernate.ddl-auto=update
+	spring.jpa.show-sql=true
+
+	Step 2:
+	create entity class with id and all deails of entity.
+
+	Step 3:
+	run project -> copy h2-console url -> localhost:<port>/h2-console -> paste jdbc url here with password/user -> sign in
+
+    Step 4:
+	Create jpaRepository interface, controller, service class
+	
+	Step 5:
+	implement CommandLineRunner -> add test data into h2 database -> repeat step 3
+
+-> create directory graphql inside resources if not present.
+   inside that folder -> create file with name "schema.graphqls"
+   provide 2 parts in this file [ entity schema and query ]
+   example:
+   type Query
+   {
+   allBooks:[Book]
+   getBook(bookId:Int):Book
+   }
+   
+   type Book
+   {
+      id:ID!
+      title:String
+      desc:String
+      author:String
+      price:Float
+   }
+   
+-> Replace @RestController -> @Controller
+   remove get and post Mapping annotation
+   add @QueryMapping with parameter defined in query of schema.graphqls file.
+   Note: to get data, we use queryMapping. To create data, we use mutation in graphql.
+   Example:
+    @QueryMapping("allBooks")//this name is from schema.graphqls file query
+    public List<Book> getBooks()
+    {
+        return this.bookService.getAllBooks();
+    }
+    @QueryMapping("getBook")
+    public Book getBookById(@Argument int bookId)
+    {
+        return this.bookService.getBookById(bookId);
+    }
+
+-> open postname -> use default path "/graphql" example: http://localhost:8009/graphql -> post -> body -> graphql -> add query -> send
+   example:
+   query{
+    allBooks{
+        id
+        title
+        desc
+        price
+    }
+   }
+   Note: if we want to add/subtract some properties in request, we can do it and it will return data of those entered request only.
+   example 2:
+   query{
+    getBook(bookId:1)
+    {
+        id
+        title
+    }
+   }
+
+-> create and save data in db though graphql
+   Step 1:
+   open schema.graphqls and add type Mutation along with method
+   create input type of data to be stored
+   type Mutation{
+   createBook(book:BookInput):Book
+   }
+   input BookInput
+   {
+      title:String
+      desc:String
+      author:String
+      price:Float
+   }
+
+   Step 2:
+   Go to controller class and add @MutationMapping on create method and provide argument of input type declared in schema.graphqls file.
+   example:
+    @MutationMapping("createBook")
+    public Book save(@Argument BookInput book)
+    {
+        Book b = new Book();
+        b.setAuthor(book.getAuthor());
+        b.setTitle(book.getTitle());
+        b.setPrice(book.getPrice());
+        b.setDesc(book.getDesc());
+        b.setPages(book.getPages());
+        return this.bookService.create(b);
+    }
+	-----------
+	@Getter
+    @Setter
+    public class BookInput
+    {
+        private String title;
+        private String desc;
+        private String author;
+        private double price;
+        private int pages;
+    }
+	Step 3:
+	open postman -> add url in post method -> body -> graphql -> add mutation query to save data.
+	Example:
+	mutation{
+    createBook(book:{
+        title: "new part jungle Book",
+        desc: "This book is latest edition",
+        author: "Son of Rowling",
+        price: 90.0,
+        pages: 90
+    })
+    {
+        id //it will return id value of book stored in db 
+    }
+    }
+---------------------------------------------------------------------------
+project 2: graphql, r2db
+Steps:
+1. Add dependencies: spring for graphql, spring reactive web, spring data r2dbc, h2 db, lombok
+2. add directory graphql inside resources, create schema.graphqls file inside graphql directory.
+   add type, input, mutation for add/update, 
+3. create classes of entities and input type in spring code which are used in graphqls file.
+4. Make sure method name used in mutation or querymapping or any other mapping has same name as with method name in java code.
+5. graphqlinterceptor can be used to invoke logging/authentication/authorization before http request goes to controller.
+6. subscription mapping used to provide data one by one to client and provide web socket path in application.properties file.
+@SubscriptionMapping
+public Flux<Employee> allEmployee() {
+	return this.employeeRepository.findAll().delayElements(Duration.ofSeconds(3));
+}
+7. batchmapping is used to map 2 tables having common id.
+
+use graphiql ui
+1. localhost:8080/graphiql -> docs -> type:mutation/query/subscription
+2. add query in gui
+
+example for mutation:
+mutation{
+  addEmployee(addEmployeeInput: 
+  {
+    name:"Rajesh"
+    salary:"1029394"
+    departmentId:1
+  }){id, name, salary}
+}
+
+example for query
+query
+{
+ getEmployeeByName(employeeName:"Rajesh")
+  {id, name, salary}
+}
+
+example for linkage of 2 tables by batchmapping:
+query
+{
+  getAllDepartment{
+    id, name, employees{id, name}
+  }
+}
+
+github link: https://github.com/DevProblems/spring-for-graphql-springboot-r2dbc/blob/master/src/main/java/com/springforgraphql/devproblems/SpringForGraphqlR2dbcApplication.java
+-------------------------------------------------------------------------------------------------
+graphql parts:
+-> schema definiton language
+	graphQl schema contains:
+	 types which are similar to classes in java
+	 operations which can be performed in these types, similar to methods in java
+	 example:
+	 type Query
+	 {
+		getBook(id:Int):Book -> operations in query type are called queries
+		getBooks():[Book]
+	 }
+
+	 type mutations
+	 {
+	   createBook(name:String, pages:Int):Int -> operations in mutations type are called mutations
+	 }
+	 
+	 type input
+	 {
+		id:Int
+		name:String
+		pages:Int
+	 }
+-> runtime environment
+   parse the schema file and creates in memory schema to avoid parsing the file again and again
+   runtime environment looks for the operation specified in user request and then checks whether that operations exists in in-memory schema or not.
+   
+   
+-> query language
+   used by clients to use operations that are defined in graphql schema.
+   {
+      getBooks{
+	  name
+	  }
+   }
+ 
+-> data fetchers : function written to map the schema query and perform specific operation.
+
+client -> sends query language -> server -> runtime environment -> graphQl schema -> data fetcher -> returns response to server -> client ui
+there is a controller between client and runtime environment.

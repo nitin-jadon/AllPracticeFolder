@@ -1,0 +1,1042 @@
+HTML is standard markup language which provides structure of web pages.
+It tells browser how to display the contents.
+
+HTML Headings
+HTML headings are defined with the <h1> to <h6> tags.
+<h1>This is heading 1</h1>
+
+Paragraphs
+HTML paragraphs are defined with the <p> tag:
+<p>This is a paragraph.</p>
+
+<title> element:
+defines a title in the browser toolbar
+-----------------------------------------------------------------------------------
+HTML Link
+HTML links are defined with the <a> tag:
+<a href="https://www.w3schools.com">This is a link</a>
+
+The target attribute specifies where to open the linked document.
+The target attribute can have one of the following values:
+_self - Default. Opens the document in the same window/tab as it was clicked
+_blank - Opens the document in a new window or tab
+_parent - Opens the document in the parent frame
+_top - Opens the document in the full body of the window
+<a href="https://www.w3schools.com/" target="_top">Visit W3Schools!</a>
+relative URL (without the "https://www" part)
+
+(Link to a page located in the html folder on the current web site)
+<a href="/html/default.asp">HTML tutorial</a>
+
+Link to a page located in the same folder as the current page: 
+<a href="/html_images.asp">HTML Images</a>
+
+Link to Email
+<a href="mailto:someone@example.com">Send email</a>
+---------------------------------------------------------------------------------
+button on link
+<button onclick="document.location='default.asp'">HTML Tutorial</button>
+------------------------------------------------------------------------------
+IMAGE
+<img src="w3schools.jpg" alt="W3Schools.com" width="104" height="142">
+allows animated gifs
+<img src="smiley.gif" alt="HTML tutorial" style="width:42px;height:42px;">
+alt attribute is used if browser can not find image.
+
+IMAGEMAP
+An image map is an image with clickable areas. The areas are defined with one or more <area> tags.
+<img src="workplace.jpg" alt="Workplace" usemap="#workmap">
+
+<map name="workmap">
+  <area shape="rect" coords="34,44,270,350" alt="Computer" href="computer.htm">
+  <area shape="rect" coords="290,172,333,250" alt="Phone" href="phone.htm">
+  <area shape="circle" coords="337,300,44" alt="Coffee" href="coffee.htm">
+</map>
+shape can be rect, pol, circle
+
+js script to send alert by onClick
+<map name="workmap">
+  <area shape="circle" coords="337,300,44" href="coffee.htm" onclick="myFunction()">
+</map>
+
+<script>
+function myFunction() {
+  alert("You clicked the coffee cup!");
+}
+</script>
+
+background-repeated: no-repeat;                           -> To add background image with no repeation if size of image is not too large
+background-attachment : fixed and background-size : cover -> To make sure the entire element is always covered
+
+<style>
+p {
+  background-image: url('img_girl.jpg');
+  background-repeated: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+</style>
+
+If you want the background image to stretch to fit the entire element, you can set the background-size property to 100% 100%
+background-size: 100% 100%
+
+To view pictures depending on different viewports size of browser. WHen we minimize or maximize the browser.
+<picture>
+  <source media="(min-width: 650px)" srcset="img_food.jpg">
+  <source media="(min-width: 465px)" srcset="img_car.jpg">
+  <img src="img_girl.jpg">
+</picture>
+
+Browser may not support all formats. If first image is supported then, it will load that image.
+<picture>
+  <source srcset="img_avatar.png">
+  <source srcset="img_girl.jpg">
+  <img src="img_beatles.gif" alt="Beatles" style="width:auto;">
+</picture>
+--------------------------------------------------------------------------------
+FEVICON - icon added on tabs along with title
+common name for icon image used should be favicon.ico
+<head>
+  <title>My Page Title</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+</head>
+
+for style
+<link rel="stylesheet" href="mystyle.css">
+--------------------------------------------------------------------------------
+javascript
+<map name="workmap">
+  <area shape="circle" coords="337,300,44" href="coffee.htm" onclick="myFunction()">
+</map>
+
+<script>
+function myFunction() {
+  alert("You clicked the coffee cup!");
+}
+</script>
+----------------------------------------------------------------------------
+Table
+tr -> table row, th -> table header, td -> table data
+border-spacing: 30px; -> used for spacing between borders. If border is already collpased as below example, then we can't use this aS double border is removed.
+<!DOCTYPE html>
+<html>
+<style>
+table, th, td {
+  border:1px solid black;
+  border-collapse: collapse; -> to avoid double borders
+  background-color: #96D4D4; -> bg color of each cell
+  border-radius: 10px; -> rounded cells
+  border-style: dashed -> type of border like ridge, groove, inset, outset
+}
+</style>
+<body>
+
+<h2>A basic HTML table</h2>
+
+<table style="width:100%">
+  <tr>
+    <th>Company</th>
+    <th>Contact</th>
+    <th>Country</th>
+  </tr>
+  <tr>
+    <td>Alfreds Futterkiste</td>
+    <td>Maria Anders</td>
+    <td>Germany</td>
+  </tr>
+  <tr>
+    <td>Centro comercial Moctezuma</td>
+    <td>Francisco Chang</td>
+    <td>Mexico</td>
+  </tr>
+</table>
+
+Set width of column and rows height
+<table style="width:100%">
+  <tr style="height:200px">
+    <th style="width:70%">Firstname</th>
+    <th>Lastname</th>
+    <th>Age</th>
+  </tr>
+  
+Vertical tables
+  <table style="width:100%">
+  <tr>
+    <th>Firstname</th>
+    <td>Jill</td>
+    <td>Eve</td>
+  </tr>
+  <tr>
+    <th>Lastname</th>
+    <td>Smith</td>
+    <td>Jackson</td>
+  </tr>
+  <tr>
+    <th>Age</th>  
+    <td>50</td>
+    <td>94</td>
+  </tr>
+</table>
+
+merge cells Header for multiple column -> colspan
+merge cells HEADER for multiple rows -> rowspan
+<tr>
+  <th rowspan="2">Phone</th>
+  <td>555-1234</td>
+</tr>
+
+<table>
+<tr>
+    <th colspan="2">Name</th>
+    <th>Age</th>
+  </tr>
+  <tr>
+    <td>Jill</td>
+    <td>Smith</td>
+    <td>50</td>
+</tr>
+</table>
+-------------------
+Horizontal alternate stripes
+To style every other table row element, use the :nth-child(even) selector like this:
+
+tr:nth-child(even) {
+  background-color: #D6EEEE;
+}
+
+Vertical alternate stripes
+td:nth-child(even), th:nth-child(even) {
+  background-color: #D6EEEE;
+}
+----------------------------
+border at bottom only
+tr {
+  border-bottom: 1px solid #ddd;
+}
+------------------------------
+Hover table elements
+tr:hover {background-color: #D6EEEE;}
+---------------------------
+Caption heading for entire table
+Note: <caption> tag should be inserted immediately after the <table> tag.
+<table style="width:100%">
+  <caption>Monthly savings</caption>
+  <tr>
+    <th>Month</th>
+    <th>Savings</th>
+  </tr>
+</table>
+---------------------------------------------------
+colgroup
+to color elements based on group of columns.
+<table style="width: 100%;">
+<colgroup>
+  <col span="3"> -> empty colgroup makes no color
+  <col span="2" style="background-color: #D6EEEE"> -> makes color with column 4-5
+  <col span="3" style="background-color: pink">    -> makes color with column 6-7-8
+  <col span="3" style="visibility: collapse">      -> hide colums 9-10-11
+</colgroup>
+<tr>
+<colgroup> tag must be a child of a <table> element and should be placed before any other table elements, like <thead>, <tr>, <td> etc., but after the <caption> element, if present.
+-----------------------------------------------------
+HTML element
+An HTML element is defined by a start tag, some content, and an end tag. Mostly, nested elements are +nt in document
+
+EMPTY elements
+HTML elements with no content are called empty elements.
+The <br> tag defines a line break, and is an empty element without a closing tag:
+<p>This is a <br> paragraph with a line break.</p>
+
+<hr> element
+The <hr> element is used to separate content in an HTML page:
+<h1>This is heading 1</h1>
+<p>This is some text.</p>
+<hr>
+<h2>This is heading 2</h2>
+<p>This is some other text.</p>
+
+<pre>
+preformatted text, holds spaces and line breaks.
+<pre>
+  My Bonnie lies over the ocean.
+
+  My Bonnie lies over the sea.
+</pre>
+
+Attributes
+Provides additonal info to elements.
+<img src="w3schools.jpg" alt="W3Schools.com" width="104" height="142">
+alt attribute for the <img> tag specifies an alternate text for an image
+
+Style attribute
+<p style="color:red;">This is a red paragraph.</p>
+<h1 style="font-size:60px;">Heading 1</h1>
+Style properties:
+1. background-color
+CSS background-color property defines the background color for an HTML element.
+<body style="background-color:powderblue;">
+</body>
+2. font-family
+CSS font-family property defines the font to be used for an HTML element:
+<h1 style="font-family:verdana;">This is a heading</h1>
+3. font-size
+font-size property defines the text size for an HTML element:
+<h1 style="font-size:300%;">This is a heading</h1>
+4. text-align
+CSS text-align property defines the horizontal text alignment for an HTML element:
+<h1 style="text-align:center;">Centered Heading</h1>
+
+
+Lang attribute
+<!DOCTYPE html>
+<html lang="en">
+<body>
+</body>
+
+Title attribute
+The title attribute defines some extra information about an element.
+Displayed when we hover over the element.
+<p title="I'm a tooltip">This is a paragraph.</p>
+
+<abbr> tag
+defines an abbreviation or an acronym. add dotted underline over text.
+<p>The <abbr title="World Health Organization">WHO</abbr> was founded in 1948.</p>
+
+We can remove underline by making
+text-decoration:none;
+
+<b> element
+defines bold text, without any extra importance
+<b>This text is bold</b>
+
+<strong> element
+defines text with strong importance
+<strong> This text is important!</strong>
+
+<i> italic
+<i>This text is italic</i>
+
+<em> emphasized tag
+writes in italic but read verbally stressed
+<p><em>This text is emphasized.</em></p>
+<p><i>This text is emphasized.</i></p>
+
+<small> element
+defines smaller text
+<small>This is some smaller text.</small>
+
+<mark> element
+defines text that should be marked or highlighted
+<p>Do not forget to buy <mark>milk</mark> today.</p>
+
+<del> element
+defines text that has been deleted from a document. browser will cut the word.
+<p>My favorite color is <del>blue</del> red.</p>
+
+<ins> element
+defines a text that has been inserted into a document. Browsers will usually underline inserted text
+<p>My favorite color is <del>blue</del> <ins>red</ins>.</p>
+
+<sub> element
+defines subscript text. Subscript text appears half a character below the normal line
+<p>This is <sub>subscripted</sub> text.</p>
+
+<sup> element
+defines superscript text. Superscript text appears half a character above the normal line
+<p>This is <sup>superscripted</sup> text.</p>
+
+<blockquote> element
+defines a section that is quoted from another source. Browsers usually indent <blockquote> elements.
+<blockquote cite="http://www.worldwildlife.org/who/index.html">
+For 60 years, WWF has worked to help people and nature thrive. As the world's leading conservation organization, WWF works in nearly 100 countries. At every level, we collaborate with people around the world to develop and deliver innovative solutions that protect communities, wildlife, and the places in which they live.
+</blockquote>
+
+<q> tag
+ defines a short quotation.
+<p>WWF's goal is to: <q>Build a future.</q></p> -> "Build a future"
+
+<address> element
+usually renders in italic, and browsers will always add a line break before and after the <address> element.
+<address>
+Written by John Doe.<br>
+Visit us at:<br>
+</address>
+
+<cite> tag
+defines the title of a creative work (e.g. a book, a poem, etc. make it in italic
+<p><cite>The Scream</cite> by Edvard Munch. Painted in 1893.</p>
+
+<bdo> tag
+is used to override the current text direction:
+<bdo dir="rtl">This text will be written from right to left</bdo>
+
+<!-- comments -->
+
+border property
+<h1 style="border:2px solid Tomato;">Hello World</h1>
+
+5 color codes -> rgb, hsla, rgba, hsla, hex
+<h1 style="background-color:rgb(255, 99, 71);">...</h1>
+<h1 style="background-color:#ff6347;">...</h1>
+<h1 style="background-color:hsl(9, 100%, 64%);">...</h1>
+<h1 style="background-color:rgba(255, 99, 71, 0.5);">...</h1>
+<h1 style="background-color:hsla(9, 100%, 64%, 0.5);">...</h1> 
+----------------------------------------------------------------------
+
+BOOKMARKS
+when pages are too long, then bookmarks are use to jump to any particular section.
+When jump to chapter 3 is clicked it will jump to element with id c3
+<html>
+<body>
+<p><a href="#C3">Jump to Chapter 3</a></p>
+<h2>Chapter 1</h2>
+<p>This chapter explains ba bla bla</p>
+<h2>Chapter 2</h2>
+<p>This chapter explains ba bla bla</p>
+<h2 id="c3">Chapter 3</h2>
+<p>This chapter explains ba bla bla</p>
+</body>
+</html>
+
+<a href="html_demo.html#C4">Jump to Chapter 4</a>
+---------------------------------------------------------------
+List
+Unordered list
+<ul>
+  <li>Coffee</li>
+  <li>Tea
+    <ul>
+      <li>Black tea</li>
+      <li>Green tea</li>
+    </ul>
+  </li>
+  <li>Milk</li>
+</ul>
+
+<ul style="list-style-type:disc;">   -> list-style-type can be circle, disc, square, none
+  <li>Coffee</li>
+  <li>Tea</li>
+  <li>Milk</li>
+</ul>
+
+Ordered list
+<ol>
+  <li>Coffee</li>
+  <li>Tea</li>
+  <li>Milk</li>
+</ol>
+
+description list
+<dl> -> description list
+  <dt>Coffee</dt> -> description tag
+  <dd>Tea</dd>    -> description detail   
+</dl>
+-------------------------------------------------------------------
+2 types of elements : inline & block-level
+A block-level element always starts on a new line and takes up the full width available like <div>, <section>
+An inline element does not start on a new line and it only takes up as much width as necessary like <span>
+-----------------------------------------------------------------------
+The <div> element is a block-level and is often used as a container for other HTML elements -> id, class and style can be used.
+<div style="background-color:black;color:white;padding:20px;">
+  <h2>London</h2>
+  <p>London is the capital city of England. It is the most populous city in the United Kingdom, with a metropolitan area of over 13 million inhabitants.</p>
+</div>
+
+Center align div
+<style>
+div {
+  width:300px;
+  margin:auto; -> center aligns the div
+}
+</style>
+
+Horizontal div methods:
+1. Using float we need to have parent container and child containers are floated inside it
+<html>
+<style>
+div.mycontainer {
+  width:100%;
+  overflow:auto;
+}
+div.mycontainer div {
+  width:33%;  
+  float:left;
+}
+</style>
+<body>
+<div class="mycontainer">
+  <div style="background-color:#FFF4A3;">
+    <p>London has over 13 million inhabitants.</p>
+  </div>
+  <div style="background-color:#FFC0C7;">
+    <p>Oslo has over 600.000 inhabitants.</p>
+  </div>
+  <div style="background-color:#D9EEE1;">
+    <p>Rome has almost 3 million inhabitants.</p>
+  </div>
+</div>
+</body>
+</html>
+
+
+2. If you change the <div> element's display property from block to inline-block, 
+the <div> elements will no longer add a line break before and after,
+ and will be displayed side by side instead of on top of each other.
+<style>
+div {
+  width:30%;  
+  display:inline-block;
+}
+</style>
+<body>
+
+<div style="background-color:#FFF4A3;">
+  <h2>London</h2>
+  <p>London is the capital city of England.</p>
+  <p>London has over 13 million inhabitants.</p>
+</div>
+
+<div style="background-color:#FFC0C7;">
+  <h2>Oslo</h2>
+  <p>Oslo is the capital city of Norway.</p>
+  <p>Oslo has over 600.000 inhabitants.</p>
+</div>
+
+<div style="background-color:#D9EEE1;">
+  <h2>Rome</h2>
+  <p>Rome is the capital city of Italy.</p>
+  <p>Rome has almost 3 million inhabitants.</p>
+</div>
+
+</body>
+
+3. We can also use display:flex for horizontal blocks in a row
+.mycontainer {
+  display: flex;
+}
+.mycontainer > div {
+  width:33%;
+}
+
+4. Using display: grid; -> create columns or rows as per requirement
+.grid-container {
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+}
+</style>
+</head>
+<body>
+
+<h1>Grid Example</h1>
+
+<p>Align three DIV elements side by side.</p>
+
+<div class="grid-container">
+
+<div style="background-color:#FFF4A3;">
+  <h2>London</h2>
+  <p>London is the capital city of England.</p>
+  <p>London has over 13 million inhabitants.</p>
+</div>
+
+<div style="background-color:#FFC0C7;">
+  <h2>Oslo</h2>
+  <p>Oslo is the capital city of Norway.</p>
+  <p>Oslo has over 600.000 inhabitants.</p>
+</div>
+
+<div style="background-color:#D9EEE1;">
+  <h2>Rome</h2>
+  <p>Rome is the capital city of Italy.</p>
+  <p>Rome has almost 3 million inhabitants.</p>
+</div>
+
+</div>
+Note: only with display: inline-block; we do not need to have parent container.
+---------------------------------------------------------------------------
+The <span> element is an inline container used to mark up a part of a text, or a part of a document
+<p>My mother has <span style="color:blue;font-weight:bold;">blue</span> eyes</p>
+-----------------------------------------------------------------------------
+class attribute
+
+The class attribute can be used on any HTML element. class attribute is often used to point to a class name in a style sheet.
+The class name is case sensitive and it can be used to perform operations using JS.
+To create a class; write a period (.) character, followed by a class name. Then, define the CSS properties within curly braces {}
+Here, main and city are 2 class with different property
+<head>
+<style>
+.city {
+  background-color: tomato;
+  color: white;
+  padding: 10px;
+} 
+.main {
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<h2>Multiple Classes</h2>
+<p>Here, all three h2 elements belongs to the "city" class. In addition, London also belongs to the "main" class, which center-aligns the text.</p>
+<h2 class="city main">London</h2> -> here, h2 html element belongs to city & main
+<h2 class="city">Paris</h2>
+<h2 class="city">Tokyo</h2>
+</body>
+
+Js class 
+<h2>Use of The class Attribute in JavaScript</h2>
+<p>Click the button to hide all elements with class name "city":</p>
+<button onclick="myFunction()">Hide elements</button>
+<h2 class="city">London</h2>
+<p>London is the capital of England.</p>
+<h2 class="city">Paris</h2>
+<p>Paris is the capital of France.</p>
+<h2 class="city">Tokyo</h2>
+<p>Tokyo is the capital of Japan.</p>
+<script>
+function myFunction() {
+  var x = document.getElementsByClassName("city");
+  for (var i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+}
+</script>
+</body>
+
+----------------------------------------------------
+Id -> should be unique within html document. # is used to add style.
+A class name can be used by multiple HTML elements, while an id name must only be used by one HTML element within the page
+
+Jumping through id
+<p><a href="#C4">Jump to Chapter 4</a></p>
+<p><a href="#C10">Jump to Chapter 10</a></p>
+<h2>Chapter 1</h2>
+<p>This chapter explains ba bla bla</p>
+<h2>Chapter 2</h2>
+<p>This chapter explains ba bla bla</p>
+<h2>Chapter 3</h2>
+<p>This chapter explains ba bla bla</p>
+<h2 id="C4">Chapter 4</h2>
+<p>This chapter explains ba bla bla</p>
+
+change text through JS and id
+
+<h1 id="myHeader">Hello World!</h1>
+<button onclick="displayResult()">Change text</button>
+<script>
+function displayResult() {
+  document.getElementById("myHeader").innerHTML = "Have a nice day!";
+}
+</script>
+-------------------------------------------------------------------
+HTML iframe is used to display a web page within a web page.
+<body>
+<h2>HTML Iframes</h2>
+<p>You can also use the CSS height and width properties to specify the size of the iframe:</p>
+<iframe src="demo_iframe.htm" style="height:100px;width:300px" title="Iframe Example"></iframe>
+</body>
+
+we can set target of iframe in <a>
+<body>
+<iframe src="demo_iframe.htm" name="iframe_a" height="300px" width="100%" title="Iframe Example"></iframe>
+<p><a href="https://www.w3schools.com" target="iframe_a">W3Schools.com</a></p>
+<p>When the target attribute of a link matches the name of an iframe, the link will open in the iframe.</p>
+</body>
+----------------------------------------------------------------------
+script tag
+<script>
+function myFunction() {
+  document.getElementById("demo").style.fontSize = "25px"; 
+  document.getElementById("demo").style.color = "red";
+  document.getElementById("demo").style.backgroundColor = "yellow";        
+}
+</script>
+
+bulb on-off example:	
+<script>
+function light(sw) {
+  var pic;
+  if (sw == 0) {
+    pic = "pic_bulboff.gif"
+  } else {
+    pic = "pic_bulbon.gif"
+  }
+  document.getElementById('myImage').src = pic;
+}
+</script>
+
+<img id="myImage" src="pic_bulboff.gif" width="100" height="180">
+
+<p>
+<button type="button" onclick="light(1)">Light On</button>
+<button type="button" onclick="light(0)">Light Off</button>
+</p>
+
+Noscript
+<body>
+<p id="demo"></p>
+<script>
+document.getElementById("demo").innerHTML = "Hello JavaScript!";
+</script>
+<noscript>Sorry, your browser does not support JavaScript!</noscript>
+<p>A browser without support for JavaScript will show the text written inside the noscript element.</p>
+</body>
+---------------------------------------------------------------------------
+meta
+<meta> element is typically used to specify the character set, page description, keywords, author of the document, and viewport settings.
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Free Web tutorials">
+  <meta name="keywords" content="HTML, CSS, JavaScript">
+  <meta name="author" content="John Doe">
+</head>
+<body>
+<p>All meta information goes inside the head section.</p>
+</body>
+
+To make website responsive in all devices
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+----------------------------------------------------------------------------
+base tag
+<head>
+<base href="https://www.w3schools.com/" target="_blank">
+</head>
+<body>
+<img src="images/stickman.gif" width="24" height="39" alt="Stickman">
+<a href="tags/tag_base.asp">HTML base Tag</a>
+</body>
+----------------------------------------------------------------------------
+actual height = height + padding + border
+actual width  = width + padding + border
+With box-sizing, padding and border are included in mentioned height & width only
+.div2 {
+  width: 300px;
+  height: 100px;
+  padding: 50px;
+  border: 1px solid red;
+  box-sizing: border-box;
+}
+--------------------------------------------------------------------------------------
+clear property specifies what should happen with the element that is next to a floating element.
+both	The element is pushed below both left and right floated elements
+article {
+  float: left;
+  padding: 20px;
+  width: 70%;
+  background-color: #f1f1f1;
+  height: 300px; /* only for demonstration, should be removed */
+}
+
+/* Clear floats after the columns */
+section::after {
+  content: "";    -> to add some content before or after the section 
+  display: table; -> let the element behave like table element
+  clear: both;    -> both The element is pushed below both left and right floated elements
+}
+--------------------------------------------------------------------------------------------
+responsive
+1. As per device, page will increase size
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+2. use max-width property is set to 100% or width: 100%
+<img src="img_girl.jpg" style="width:100%;">
+<img src="img_girl.jpg" style="max-width:100%;height:auto;">
+3. provide multiple images
+<picture>
+  <source srcset="img_smallflower.jpg" media="(max-width: 600px)">
+  <source srcset="img_flowers.jpg" media="(max-width: 1500px)">
+  <source srcset="flowers.jpg">
+  <img src="img_smallflower.jpg" alt="Flowers">
+</picture>
+4. use font-size vw unit
+<h1 style="font-size:10vw">Hello World</h1>
+5. use media queries
+/* Use a media query to add a break point at 800px: */
+@media screen and (max-width: 800px) {
+  .left, .main, .right {
+    width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
+  }
+}
+6. usee css3 or bootstrap
+-------------------------------------------------------------------------
+keyboard input
+<p>Save the document by pressing <kbd>Ctrl + S</kbd></p>
+
+code
+<code>
+x = 5;
+y = 6;
+z = x + y;
+</code>
+
+<p><samp>File not found.<br>Press F1 to continue</samp></p>
+
+<var> element  is used to define a variable in programming or in a mathematical expression
+<p>The area of a triangle is: 1/2 x <var>b</var> x <var>h</var>, where <var>b</var> is the base, and <var>h</var> is the vertical height.</p>
+
+
+--------------------------------------------------------
+
+<section>, <article> can be used ofr adding elements. Nesting <article> in <section> or Vice Versa
+
+<nav>
+  <a href="/html/">HTML</a> |
+  <a href="/css/">CSS</a> |
+  <a href="/js/">JavaScript</a> |
+  <a href="/jquery/">jQuery</a>
+</nav>
+----------------------------------------------------------
+guide
+quotes should be added when required,
+ lower case should be used for tags, HTML allows spaces around equal signs.
+ But space-less is easier to read and groups entities better together.
+Never Skip the <title> Element
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+For using special characters in content, we need to add "&amp" for &, "&gt;" for >, etc
+emojis also have special character.
+--------------------------------------------------------------
+form
+<html>
+<body>
+<form>
+  <input type="radio" id="html" name="fav_language" value="HTML">
+  <label for="html">HTML</label><br>
+  <input type="radio" id="css" name="fav_language" value="CSS">
+  <label for="css">CSS</label><br>
+  <input type="radio" id="javascript" name="fav_language" value="JavaScript">
+  <label for="javascript">JavaScript</label>
+</form> 
+</body>
+</html>
+
+1. each input/select/textarea field must have a name attribute to be submitted.
+2. If the name attribute is omitted, the value of the input field will not be sent at all.
+The for attribute of the <label> tag should be equal to the id attribute of the <input> element to bind them together.
+
+value attribute provides initial value for input field
+<input type="text" value="hello">	Displays a single-line text input field
+<input type="radio">	                         Displays a radio button (for selecting one of many choices)
+<input type="checkbox">	                         Displays a checkbox (for selecting zero or more of many choices)
+<input type="submit">	                         Displays a submit button (for submitting the form)
+<input type="button">	                         Displays a clickable button
+<input type="range" id="a" name="a" value="50">  Displays meter type range of value 
+<input type="number" id="b" name="b" value="50"> Displays number
+<input type="password" id="pwd" name="pwd">
+<input type="reset" value="Reset">               resets all values
+<input type="date" id="birthday">
+<input type="datetime-local">
+<input type="email">
+<input type="image">
+<input type="file">
+<input type="hidden">
+<input type="search">
+<input type="tel" id="phone" name="phone" placeholder="123-45-678" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required>
+<input type="time">
+<input type="url">
+
+atttributes
+<input type="text" value="John" readonly> -> can not change value
+<input type="text" value="John" disabled> -> will not be sent through form
+<input type="text" size="50">             -> input box size is 50
+<input type="text" maxlength="4" size="4">-> can not add size > 4
+<input type="date" min="2000-01-02">
+<input type="date" max="2000-01-02">
+<input type="file" id="files" name="files" multiple> -> multiple files can be added
+<input type="text" id="country_code" name="country_code" pattern="[A-Za-z]{3}">                          -> add pattern
+<input type="tel" id="phone" name="phone" placeholder="123-45-678" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"> -> placeholder gives hint of what type of data is to be stored
+<input type="text" id="username" name="username" required> -> mandatory field to be filled
+<input type="number" id="points" name="points" step="3">   -> if step="3", legal numbers could be -3, 0, 3, 6
+<input type="text" id="fname" name="fname" autofocus>      -> this field will automatically focused
+
+select
+<form action="/action_page.php">
+  <label for="cars">Choose a car:</label>
+  <select id="cars" name="cars">
+    <option value="volvo">Volvo</option>
+    <option value="saab">Saab</option>
+    <option value="fiat">Fiat</option>
+    <option value="audi">Audi</option>
+  </select>
+  <input type="submit">
+</form>
+
+visible all options in select using size
+<label for="cars">Choose a car:</label>
+<select id="cars" name="cars" size="3"> "<select id="cars" name="cars" multiple>" -> can also be used for selecting multiple options
+  <option value="volvo">Volvo</option>
+  <option value="saab">Saab</option>
+  <option value="fiat">Fiat</option>
+  <option value="audi">Audi</option>
+</select>
+-------------------------------------------------------------------------------------------------------
+The <fieldset> element is used to group related data in a form.
+The <legend> element defines a caption for the <fieldset> element
+<form action="/action_page.php">
+  <fieldset>
+    <legend>Personalia:</legend>
+    <label for="fname">First name:</label><br>
+    <input type="text" id="fname" name="fname" value="John"><br>
+    <label for="lname">Last name:</label><br>
+    <input type="text" id="lname" name="lname" value="Doe"><br><br>
+    <input type="submit" value="Submit">
+  </fieldset>
+</form>
+
+----------------------------------------------------------------------------
+options in input from datalist
+<form action="/action_page.php">
+  <input list="browsers">
+  <datalist id="browsers">
+    <option value="Edge">
+    <option value="Firefox">
+    <option value="Chrome">
+    <option value="Opera">
+    <option value="Safari">
+  </datalist>
+</form>
+-------------------------------------------------------------------------------
+<form action="/action_page.php"
+oninput="x.value=parseInt(a.value)+parseInt(b.value)">
+  0
+  <input type="range" id="a" name="a" value="50">
+  100 +
+  <input type="number" id="b" name="b" value="50">
+  =
+  <output name="x" for="a b"></output>
+  <br><br>
+  <input type="submit">
+</form>
+
+xhtml is stricter
+-----------------------------------------------------------------------------
+<canvas> element is only a container for graphics, graphics are added through js script
+example:
+<canvas id="myCanvas" width="200" height="100" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML canvas tag.</canvas>
+
+<script>
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+ctx.moveTo(0,0);
+ctx.lineTo(200,100);
+ctx.stroke();
+</script>
+
+<script>
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+ctx.font = "30px Arial";
+ctx.fillText("Hello World",10,50); -> create solid text
+</script>
+
+<script>
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+ctx.font = "30px Arial";
+ctx.strokeText("Hello World", 10, 50); -> create two lines text
+</script>
+-------------------------------------------------------------------------------------
+scalable vector graphics
+
+<svg width="100" height="100">
+  <circle cx="50" cy="50" r="40"
+  stroke="green" stroke-width="4" fill="yellow" />
+Sorry, your browser does not support inline SVG.
+</svg>
+
+<svg width="400" height="120">
+  <rect x="10" y="10" width="200" height="100" stroke="red" stroke-width="6" fill="blue" />
+  Sorry, your browser does not support inline SVG.
+</svg>
+
+<svg width="400" height="180">
+  <rect x="50" y="20" rx="20" ry="20" width="150" height="150"
+  style="fill:red;stroke:black;stroke-width:5;opacity:0.5" />
+Sorry, your browser does not support inline SVG.
+</svg>
+
+SVG	Canvas
+SVG is XML based, which means that every element is available within the SVG DOM. You can attach JavaScript event handlers to SVG graphics.
+Canvas is rendered pixel by pixel. In canvas, once the graphic is drawn, it is forgotten by the browser. 
+Canvas is used in gaming graphics but svg not.
+--------------------------------------------------------------------------------------
+<video width="320" height="240" controls>
+  <source src="movie.mp4" type="video/mp4">
+  <source src="movie.ogg" type="video/ogg">
+Your browser does not support the video tag.
+</video>
+
+autoplay attribute to autpla video -> <video width="320" height="240" autoplay>
+autoplay and muted                 -> <video width="320" height="240" autoplay muted>
+
+controls help to provide mute, play controls
+
+<audio controls autoplay>
+  <source src="horse.ogg" type="audio/ogg">
+  <source src="horse.mp3" type="audio/mpeg">
+Your browser does not support the audio element.
+</audio>
+
+<object> and <embed> element defines an embedded object within an HTML document.
+
+
+Video
+<iframe width="420" height="315"
+src="https://www.youtube.com/embed/tgbNymZ7vqY">
+</iframe>
+
+loop=1 to loop forever
+<iframe width="420" height="315"
+src="https://www.youtube.com/embed/tgbNymZ7vqY?playlist=tgbNymZ7vqY&loop=1">
+</iframe>
+
+mute=1 & autoplay=1
+<iframe width="420" height="315"
+src="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1&mute=1">
+</iframe>
+
+------------------------------------------------------------------------
+get location
+<button onclick="getLocation()">Try It</button>
+
+<p id="demo"></p>
+
+<script>
+const x = document.getElementById("demo");
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition, showError);
+  } else { 
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+function showPosition(position) {
+  x.innerHTML = "Latitude: " + position.coords.latitude + 
+  "<br>Longitude: " + position.coords.longitude;
+}
+
+function showError(error) {
+  switch(error.code) {
+    case error.PERMISSION_DENIED:
+      x.innerHTML = "User denied the request for Geolocation."
+      break;
+    case error.POSITION_UNAVAILABLE:
+      x.innerHTML = "Location information is unavailable."
+      break;
+    case error.TIMEOUT:
+      x.innerHTML = "The request to get user location timed out."
+      break;
+    case error.UNKNOWN_ERROR:
+      x.innerHTML = "An unknown error occurred."
+      break;
+  }
+}
+</script>
+------------------------------------------------------------------------
+we can do drag/drop using js
+web storage for storing large data

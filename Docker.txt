@@ -1,0 +1,359 @@
+Docker - software container platform
+
+There are some cases when code is working on developer side but not on testing team.
+That's where docker comes into picture. It makes deployment easier and resolves lot of deployment related issues.
+
+Containers allows developers to package the applications with all it parts it needs including backend component, frontend component, DB and libraries.
+and ship it out as one package.
+Docker ensures that this container is shipped to all possible different platforms.
+                                                                                                            pull image in staging environment
+Flow of Docker                                                                                            /  
+                                                                                                         /
+developer -> docker file(Steps to create docker image) -> docker image -> docker hub (hub.docker.com)    \
+                                                              |                                           \  
+														Docker container                                    pull image in test enviornment
+                                                  (runtime instance of docker image)
+
+Virtualizations
+It contains hypervisor which creates VMs. VMs have separate OS compared to host OS and requires separate space allocations.
+Containerization
+Container engine have containers over the top which contains libraries, dependencies and code package.
+Containers are light weight and do not take separate space allocations & do not have OS.
+
+Docker engine
+Command prompt act as client and docker daemon(which contains containers) act as server.
+Docker request are sent through REST api request or CLI.
+Docker server is called as docker engine.
+daemon can be placed at host or at another OS.
+Hence, docker host contains docker daemon, pulled images and created containers.  
+
+Build app only once -> once applicaion is in container, it can run in any platform which has docker installed.We would not need to re-configure and build the app.
+Docker can run on any platform, be it local system, amazon ec2, google cloud platform, rackspace server, virtualbox.
+Docker provides isolation -> it does not interfere with other app running on system -> deleting the container will delete entire code and dependencies-> no left over will be left on the system.
+
+If docker can not be installed on local, 
+1. cli can be used from link: https://labs.play-with-docker.com/p/cn3k3mc7vdo000at2mrg
+Or install docker desktop. 
+3. type docker version on cmd
+If errors persists -> enable virtualization in bios settings -> open powershell as administrator -> wsl --install -> Open docker desktop
+
+docker image -> template to create containers
+
+Docker commands
+Basic
+docker version -> gives info client and server(docker engine)
+docker -v      -> version number
+docker info    -> gives info about container, images, 
+docker --help  -> for knowing about different commands of docker.
+docker login   -> to login with credentials of docker hub
+——————————
+Images
+docker images                       -> shows image id and repo description of pulled docker images
+docker images -q                    -> returns all image id
+docker images -f "dangling=true"    -> shows images which are not associated with any container
+docker images -f "dangling=true" -q -> shows images id which are not associated with any container
+docker inspect <imageName>          -> get details of image, like author name. 
+open docker hub in browser          -> login to docker hub -> explore repositories -> select anyone ("ubuntu) -> copy docker pull command as written below
+docker pull <imagename:tag>         -> pulls image from docker hub repo (tag is optional)
+docker rmi <image id>               -> remove image from local  (-f for force removal)
+docker rmi <image id> -f            -> for force removal)
+docker history <image-id | name>    -> history of images
+——————————
+Containers
+docker ps                            -> show all containers including container id which are running
+docker ps -a                         -> shows all containers
+docker run -it <imagename>           -> create container(running instance of image) i - interactive mode, t - tty to enter into container shell runtime env
+open another cmd and use command docker ps
+docker run --name <yourContainerName> -it <imagename> -> flexible naming
+docker start <container-id | name>   -> start container
+docker stop  <container-id | name>   -> stop container (auto exit from container)
+docker kill  <container-id | name>   -> auto exit from container
+docker rm <container-id | name>      -> remove container
+docker pause <container-id | name>   -> pause the interactive mode of container (no commands will be executed on the shell)
+docker unpause <container-id | name> -> unpause the interactive mode of container (commands will be executed again on the shell)
+docker top ContainerName/ID          -> shows container id of top of the created container
+docker stats ContainerName/ID        -> shows details of container
+docker attach ContainerName/ID       -> enter intot he shell of the container
+——————————
+System
+docker stats        -> shows memory usage once containers are started else it will show 0% memory usage 
+docker system df    -> shows imfo about disk usage
+docker system prune -> remove all unused containers (-a will also remove images without atleast 1 container)
+docker login        -> login with git hub credentials
+-----------------------
+
+Run jenkins on container
+
+docker pull jenkins/jenkins   -> Explore repo jenkins and copy pull image command
+docker run --name myjenkins -p 8080:8080 -p 50000:50000 -v C:\Users\HP\Desktop:/var/jenkins_home jenkins/jenkins -> run container
+here, host port mapping to container port mapping <-8080:8080-> container port
+Once, jenkins is fully up and running -> open localhost:8080 -> paste password
+Install suggested plugins -> install -> sign up if any user should be added -> go to profile -> configure -> set some password
+Dashboard->Create new job-> add an item -> job name ->  freestyle job -> skip rest of plugins -> build -> execute shell commands like ls >save
+(Note: container share common volumes for eg: if i create another container on same path with port 9090 docker run --name myjenkins -p 9090:8080 -p 50000:50000 -v /var/jenkins_home jenkins then, same login credentials and created job will be shown)
+
+----------------------------------
+Dockerfile -> steps of instructions to create image. (Note this name should be used case sensitive. Also, image name used should be lowercase.)
+1. Create Dockerfile
+Below 3 PARTS ARE mandatory to add in docker file
+FROM -> base image
+RUN  -> execute while building image through dockerfile
+CMD  -> executes while running docker image.
+
+Recommneded to add MAINTAINER name as well
+Example Docker file content:
+#getting base image
+FROM ubuntu
+
+MAINTAINER nitin jadon <nitin97jadon@gmail.com>
+
+RUN apt-get update
+
+CMD ["echo", "this is my first docker image"]
+
+2. docker build -t <imagenameLowerCase>:<tag> <location or simply dot> -> build image
+3. docker run <image>:<tag>
+-----------------------------------------
+Docker compose    -> tool for defining & running multi-container docker applications. 
+docker-compose -v -> check version
+docker-compose.yml -> create compose file
+Step 1 : Installation Already installed in windows and mac along with docker.
+Step 2 : Create docker compose file at any location on your system
+   docker-compose.yml
+Example:
+version: '3'
+
+services:
+
+  web:
+    image: nginx
+
+  database:
+    image: redix
+
+Step 3 : Check the validity of file by command
+    docker-compose config
+
+Step 4 : Run docker-compose.yml file by command
+   docker-compose up -d
+
+Steps 5 : Bring down application by command
+   docker-compose down
+
+Step 6 : If you want to scape up any services andd create multiple instances of it then,
+—scale
+docker-compose up -d --scale database=4 (database can be any other service too)
+-------------------------------------------
+Docker volume                -> when we pull images there has to be some place where data can be stored.
+docker volume create <volumeName>
+docker volume ls             -> list volume name
+docker volume rm <name>      -> remove volume
+docker volume prune          -> remove unused volumes
+docker volume inspect <name> -> information of volume
+use name of volume in below command to share common volume between multiple containers
+docker run --name myjenkins -p 8080:8080 -p 50000:50000 -v <volume name>:/var/jenkins_home jenkins
+----------------------------------------------
+
+DOCKER SWARM
+A swarm is a group of machines that are running Docker and joined into a cluster 
+Docker Swarm is a tool for Container Orchestration
+
+The machines in a swarm can be physical or virtual. After joining a swarm, they are referred to as nodes
+Swarm managers are the only machines in a swarm that can execute your commands, or authorise other machines to join the swarm as workers
+
+Workers are just there to provide capacity and do not have the authority to tell any other machine what it can and cannot do
+
+you can have a node join as a worker or as a manager. At any point in time, there is only one LEADER and the other manager nodes will be as backup in case the current LEADER opts out
+
+You need to do 
+- Health check on every container
+- Ensure all containers are up on every system
+- Scaling the containers up or down depending on the load
+- Adding updates/changes to all the containers
+
+Orchestration - managing and controlling multiple docker containers as a single service
+Tools available - Docker Swarm, Kubernetes, Apache Mesos
+
+Pre-requisites
+1. Docker 1.13 or higher
+2. Docker Machine (pre installed for Docker for Windows and Docker for Mac)https://docs.docker.com/machine/insta...
+https://docs.docker.com/get-started/p...
+
+Step 1 :  Create Docker machines (to act as nodes for Docker Swarm)   Create one machine as manager and others as workers
+    docker-machine create --driver hyperv manager1    docker-machine create --driver virtualbox manager1
+
+   docker-machine:Error with pre-create check: “exit status 126”
+   https://stackoverflow.com/questions/38696164/docker-machineerror-with-pre-create-check-exit-status-126
+   brew cask install virtualbox;
+
+   Create one manager machine
+   and other worker machines
+
+Step 2 :  Check machine created successfully
+    docker-machine ls
+    docker-machine ip manager1
+
+Step 3 :  SSH (connect) to docker machine
+    docker-machine ssh manager1
+
+Step 4 :  Initialize Docker Swarm    docker swarm init --advertise-addr MANAGER_IP
+    docker node ls
+    (this command will work only in swarm manager and not in worker)
+
+Step 5 :  Join workers in the swarm
+    Get command for joining as worker
+    In manager node run command
+    docker swarm join-token worker
+    This will give command to join swarm as worker
+
+    docker swarm join-token manager
+    This will give command to join swarm as manager
+
+    SSH into worker node (machine) and run command to join swarm as worker
+   
+    In Manager Run command - docker node ls to verify worker is registered and is ready
+  
+    Do this for all worker machines
+
+Step 6 :  On manager run standard docker commands
+    docker info
+    check the swarm section 
+    no of manager, nodes etc
+
+    Now check docker swarm command options 
+    docker swarm 
+
+Step 7 :  Run containers on Docker Swarm
+    docker service create --replicas 3 -p 80:80 --name serviceName nginx
+    Check the status:
+    docker service ls
+    docker service ps serviceName
+    Check the service running on all nodes
+    Check on the browser by giving ip for all nodes
+
+Step 8 :  Scale service up and down
+   On manager node 
+   docker service scale serviceName=2
+
+Inspecting Nodes (this command can run only on manager node)
+docker node inspect nodename
+docker node inspect self
+docker node inspect worker1
+
+Step 9 : Shutdown node
+   docker node update --availability drain worker1
+
+Step 10 :  Update service
+   docker service update --image imagename:version web
+   docker service update --image nginx:1.14.0 serviceName
+
+Step 11 :  Remove service
+   docker service rm serviceName
+docker swarm leave : to leave the swarm
+docker-machine stop machineName : to stop the machine
+docker-machine rm machineName : to remove the machine
+
+---------------------------------------------------------------------------
+Deploy spring boot app with docker
+
+-> create spring boot app
+  for example: add dependency like spring web and create one controller class with getMapping
+	@RestController
+	public class Controller {
+		@GetMapping
+		public String getMessage()
+		{
+			return "docker app";
+		}
+	}
+
+  Add tag <finalName> inside <build> tag for package name else package name will be groupId and ArtifactId which will make the name lengthy
+	<build>
+		<finalName>docker_App</finalName> // namimg for package
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+  
+-> package app using "mvn clean package"
+   Step 1: open cmd of project file where pom.xml is present
+   Step 2: if mvn not installed, download apache maven -> download -> binary zip arhive -> extract -> copy path (example: C:\Program Files\apache-maven-3.9.6)
+           -> add system variable in environmental variables -> add variable name "MAVEN_HOME", variable value "copied path"
+		   -> add another variable in PATH -> "%MAVEN_HOME%\bin"
+   Step 3:command: mvn clean package (packages the project and its dependencies)
+-> write dockerfile to build dockerImage
+   create dockerfile on same level of pom.xml -> right click on project -> new -> dockerfile
+	example:
+	FROM openjdk:17 //version of java to be used acting as base image
+
+	COPY target/docker_App.jar /usr/app/ //copy jar file into docker target location
+
+	WORKDIR /usr/app  //change directory to docker directory
+
+	ENTRYPOINT ["java", "-jar", "docker_App.jar"] //run this command inside that location
+
+-> create docker image using dockerfile
+   Step 1: go to project directory where dockerfile is available & open cmd.
+   Step 2: command: docker build -t <any Name for image> . //dot is searching dockerfile in current directory.
+   Step 3: command: docker images -> to check image is created.
+
+-> run docker image (to create container)
+   command: docker run -d -p 8080:8080 sbapp //-d is detached mode, -p is port mapping of local port with container port
+
+-> access app in browser
+   open browser with port 8080
+
+-------------------------------------------------------------------------------------------
+spring boot using docker compose
+Step 1: open project in intellij -> clikc maven "m" icon on right -> lifecycle -> package 
+Step 2: open project path in file explorer -> copy jar file -> paste in your destination folder
+Step 3: create dockerfile in destination project path:
+        example:
+		FROM openjdk:17
+		WORKDIR /usr/src/crud
+		COPY . /usr/src/crud
+		CMD ["java", "-jar","crudPractice-0.0.1-SNAPSHOT.jar"]
+Step 4: open cmd in project path -> docker ps -> docker ps -a -> remove existing containers (docker rm <id>) and images (docker rmi <imageId>)
+Step 5: docker build -t <name> . -> docker run --name <container name> -it <imagename created during dockerFile build>
+Note: It will give database error as db is not provided. As now we need to create another dockerfile for db. so it would be better to use docker-compose.yml file.
+Step 6: create docker-compose.yml file inside project directory
+example:
+version : "3"
+services:
+  dbservice:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_USERNAME=root
+    volumes:
+      - ./data:/var/lib/mysql #for storing db data
+    ports:
+      - 3306:3306
+    networks:
+      - crud #common network for connection between services
+
+  appservice:
+    build: ./boot
+    depends_on:
+      - dbservice
+    environment:
+      - spring.datasource.url=jdbc:mysql://dbservice:3306/crud?createDatabaseIfNotExist=true
+      - spring.datasource.username=root
+      - spring.datasource.password=admin
+    ports:
+      - 9192:9292
+    networks:
+      - crud #common network for connection between services
+
+networks:
+  crud: #common network for connection between services
+
+Step 7: open cmd where docker-compose.yml file is created -> run command : docker-compose up
+
+docker-compose up -d -> to run the services in detach mode
+
+Recommended url : http://host.docker.internal:<port>/<api> instead of localhost for testing in docker but can use localhost
+

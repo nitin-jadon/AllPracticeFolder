@@ -1,0 +1,950 @@
+Bootstrap
+
+Bootstrap -> css based responsive front end framework developed by twitter
+create responsive websites while considering following sizes:
+extra-small(phone), small(tablet), medium(laptop), large screens(led tv)
+advantages: open source, saves lot of times as it has inbuilt features, compatible with browsers
+
+bootstrap 4 vs bootstrap 3:
+based on flexbox layout and more responsive.
+
+bootstrap steps:
+Method 1 -> using cdn path:
+1. https://getbootstrap.com/ -> copy <link> tag
+Example:
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+2. paste in head of html file after title
+3. test it by using some classes of bootstrap
+Example:
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous">
+</head>
+<body>
+    <a href="" class="btn btn-secondary">click here</a>
+</body>
+
+Method 2 -> using compiled css & js
+1. download compiled css js zip file
+2. extract at required location
+3. use link to add file location
+
+Example:
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+</head>
+<body>
+    <a href="" class="btn btn-primary">click here</a>
+</body>
+----------------------------------------------------------------------
+bootstrap layout
+div
+-> container class       -> 1140px wide by default (changes as per size reduces), responsive , in center
+-> container-fluid class -> 100% width
+-> row class             -> added inside container
+-> w-100                 -> to manually add break point in row to add limited cols in 1 line
+-> col                   -> added inside row
+-> col-6                 -> total columns in grid system is 12. col-6 will give size of 6 columns.  
+-> col-12/col            -> it has size upto 12 columns in grid.
+Example:
+<body>
+    <a href="" class="btn btn-primary">click here</a>
+    <div class="container">container
+        <div class="row">row 1</div>
+        <div class="row">
+            <div class="col-lg">col1 Lorem ipsum dolor</div>
+            <div class="col-lg">col2</div>
+            <div class="w-100"></div>
+            <div class="col">col3</div>
+            <div class="col">col4</div>
+        </div>
+    </div>
+</body>
+
+div sizes:
+Extra-large >=1200px          col-el
+Large       >=992px           col-lg
+Medium      >=768px           col-md
+Small       >=576px (tablet)  col-sm
+Extra Small <576px (mobile)   no name for extra small
+
+------------------------------------------------------------------------
+Column helper classes
+-> col-md-*, col-sm-*, col-el-*, col-lg-*. -> If col-md-* is used then, column will remain same size till medium screens resolution. (* is 1-12)
+--------
+offset
+-> offset-xl-*, offset-*, etc  -> used for adding blank columns just col-md-* or any col resultion classes.
+Example: 
+<div class="col-2 offset-3">
+ <h1>Website heading</h1>
+</div>
+--------
+order -> order-last, order-first, order-0, order-1, order-md-3, etc
+Example:
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-3">col 1</div>
+            <div class="col-3 order-last">col 2</div>
+            <div class="col-3 order-first">col 3</div>
+            <div class="col-3">col 4</div>
+        </div>
+    </div>
+</body>
+
+Example:
+<div class="container">
+	<div class="row">
+		<div class="col-md-8 order-md-2">col 1</div>
+		<div class="col-md-4 order-md-1">col 2</div>
+	</div>
+</div>
+Here, col 1 will be at right till medium screen size after that order will back to default.
+--------------------------------------
+Nested grid
+<div class="container">
+	<div class="row">
+		<div class="col-8">
+			<div class="row">
+				<div class="col-6">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam ex fuga ab enim necessitatibus sint placeat neque earum exercitationem perferendis?</div>
+				<div class="col-6">Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere soluta quia consequuntur architecto quod esse repudiandae maxime, necessitatibus distinctio totam perferendis, similique, mollitia iure possimus molestias ducimus quisquam illo autem delectus? Nostrum saepe iusto sit! Commodi consequuntur ipsum accusamus ipsa?</div>
+			</div>
+		</div>
+	</div>
+</div>
+----------------------------------------------------------------------------
+margin
+m-auto  -> to align in center, margin from all sides
+ml-auto -> to align at right
+mr-auto -> to align at left
+ml-el-* (0-5) -> margin left with number
+mt-lg-* -> margin top till large screen
+mb-sm-* -> margin bottom till small screen
+ml-md-* -> margin left till medium 
+mx-md-* -> margin on x axis
+my-md-* -> margin on y axis
+negative margin 
+ml-md-n* ->(* is 0-5)
+
+example:
+<div class="container">
+	<div class="row">
+		<div class="col-1 mr-auto">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias, error. Fugit enim numquam earum deserunt delectus voluptates nostrum nam eveniet.</div>
+		<div class="col-2 ml-auto">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore iure quam aperiam consequuntur natus illo earum tempore, repellat voluptate facere.</div>
+	</div>
+</div>
+	
+padding
+p-auto
+pl-auto
+pt-md-* -> (* is 0-5) padding top till medium screen
+pb-el-* -> (* is 0-5) padding bottom till extra large screen
+pr-sm-* -> (* is 0-5) padding right till small screen
+py-* py-sm-* -> padding on y axis
+px-* px-sm-* -> padding on x axis
+
+
+no-gutters class should be used in row to remove default margin and padding for columns
+example:
+<div class="container">
+	<div class="row no-gutters">
+		<div class="col-1">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias, error. Fugit enim numquam earum deserunt delectus voluptates nostrum nam eveniet.</div>
+		<div class="col-2">jgjvhgfg Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore iure quam aperiam consequuntur natus illo earum tempore, repellat voluptate facere.</div>
+	</div>
+</div>
+
+----------------------------------------------------------------
+horizontal allignment
+justify-content
+justify-content-end     -> shift all columns right
+justify-content-start   -> shift all columns left
+justify-content-center  -> shift all columns to center
+justify-content-around  -> have some gaps between columns and sides
+justify-content-between -> have some gaps between columns
+justify-content-md-center
+
+example:
+<div class="container">
+	<div class="row justify-content-center">
+		<div class="col-1">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias, error. Fugit enim numquam earum deserunt delectus voluptates nostrum nam eveniet.</div>
+		<div class="col-2">jgjvhgfg Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore iure quam aperiam consequuntur natus illo earum tempore, repellat voluptate facere.</div>
+	</div>
+</div>
+----------------------------------------------------------------------
+vertical allignment
+
+.align-items-center    -> create col block in row with data at center
+.align-items-end       -> create col block in row with data at end
+.align-items-start     -> create col block in row with data at start
+.align-items-md-center -> create col block in row with data at center till medium screen
+example:
+<div class="row align-items-center">
+	<div class="col-1">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias, error. Fugit enim numquam earum deserunt delectus voluptates nostrum nam eveniet.</div>
+	<div class="col-2" style="background-color:red;">jgjvhgfg Lorem, ipsum dolor sit amet consectetur adipisicing elit.</div>
+</div>
+
+
+To align a particular col use align-self
+.align-self-start
+.align-self-end
+.align-self-center
+.align-self-baseline
+--------------------------------------------------------------------------------------
+vertical allignment while streching screens
+to avoid the column block not to be streched we use
+
+align-content-around  -> align content inside div with spaces between them vertically
+align-content-center  -> align content inside div with spaces above and below them vertically
+align-content-end
+align-content-start
+align-content-between
+align-content-lg-start -> align content inside div with spaces below them vertically
+
+example:
+<div class="container">
+<div class="row align-content-around" style="height: 400px; background-color:green;">
+	<div class="col-3">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias, error. Fugit enim numquam earum deserunt delectus voluptates nostrum nam eveniet.</div>
+	<div class="col-8" style="background-color:red;">jgjvhgfg Lorem, ipsum dolor sit amet consectetur adipisicing elit.</div>
+	<div class="col-3" style="background-color:violet;">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias, error. Fugit enim numquam earum deserunt delectus voluptates nostrum nam eveniet.</div>
+	<div class="col-4" style="background-color:green;">jgjvhgfg Lorem, ipsum dolor sit amet consectetur adipisicing elit.</div>
+</div>
+</div>
+--------------------------------------------------------------------------------------
+order col element
+.flex-row-reverse    -> arrange cols of row element in reverse order
+.flex-column         -> arrange element in column way
+.flex-column-reverse -> arrange element in column way reverse
+.flex-nowrap         -> to add all columns in single row even if it exceeds screen size
+.flex-wrap-reverse   -> to wrap elements at top instead of bottom
+.flex-fill           -> to make a particular column to take entire block in row 100% width
+.flex-lg-column      -> arrange element in column way till large screens
+.flex-md-column-reverse ->  arrange element in column way till medium screens in reverse order
+---------------------------------------------------------------------------------------
+display types
+
+d-none         d-xl-none             -> display:none
+d-inline       d-lg-inline           -> display:inline
+d-inline-block        -> display: inline-block
+d-block               -> display:block
+d-table               -> dispaly:table
+d-table-cell          -> display:table-cell
+d-table-row           -> display-table-row
+d-flex                -> display:flex
+d-inline-flex         -> d-inline-flex
+example 1:
+here col-3 size div, will be visible as block till small screen then, it will hide.
+<div class="container">
+	<div class="row" style="height: 400px; background-color:green;">
+		<div class="col-3 d-none d-sm-block">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias, error. Fugit enim numquam earum deserunt delectus voluptates nostrum nam eveniet.</div>
+		<div class="col-8" style="background-color:red;">jgjvhgfg Lorem, ipsum dolor sit amet consectetur adipisicing elit.</div>
+		<div class="col-3" style="background-color:violet;">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias, error. Fugit enim numquam earum deserunt delectus voluptates nostrum nam eveniet.</div>
+		<div class="col-4" style="background-color:green;">jgjvhgfg Lorem, ipsum dolor sit amet consectetur adipisicing elit.</div>
+	</div>
+</div>
+
+example 2:
+To make display as flex, we can add it in parent div
+<div class="d-flex">
+	<div class="p-3 order-3">col1</div>
+	<div class="p-3 order-1">col2</div>
+	<div class="p-3 order-2">col3</div>
+</div>
+
+display during print time
+d-print-none
+d-print-inline
+d-print-<rest of display types>
+---------------------------------------------------------------------------------------
+float (Note: .clearfix should be used along with float to have balanced layout)
+
+float-left   float-xl-left
+float-right  float-sm-right
+float-none   float-md-none   
+-----------------------------
+width
+
+w-25   -> width 25%
+w-50   -> width 50%
+w-75
+w-100
+mw-100 -> max width 100%
+w-auto -> auto width
+
+vw-100 -> viewport width 100%
+min-vw-100 -> min viewport width 100%
+-----------------------
+height
+
+h-25
+h-50
+h-75   -> height 75%
+h-100  -> height 100%
+mh-100 -> max height 100
+h-auto -> 10% height
+vh-100 -> viewport height 100
+min-vh-100 -> min viewport height 100
+
+Example:
+<div class="container clearfix" style="height: 300px;">
+	<div class="float-right w-25">col 1</div>
+	<div class="float-left vh-100">col 2</div>
+</div>
+---------------------------------------------------------------------------------------
+position
+fixed-top    -> position:top and top 0
+fixed-bottom -> position:bottom and bottom 0
+sticky-top   -> position:sticky and top 0
+
+overflow
+overflow-auto   -> overflowed content is scrolled
+overflow-hidden -> overflowed content is hidden
+example:
+<div class="container clearfix" style="height: 300px;">
+	<div style="height: 50px;" class="overflow-hidden">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fugiat minus ipsa similique consequuntur</div>
+	<div class="fixed-top w-25">col 1</div>
+	<div class="sticky-top vh-100">col 2</div>
+	<div>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fugiat minus ipsa similique consequuntur</div>
+</div>
+
+---------------------------------------------------------------------------------------
+template design
+using images from unsplash.com
+icons -> fontawesome.com -> old version -> bootstrap cdn for fontawesome -> copy link tag
+colors -> flatuicolors.com
+color pick from web -> colorzilla
+lead -> used to make content bold
+circular image -> border-radius:50%
+----------------------------------------------------------------------------------------
+bg color
+bg-primary     -> blue color
+bg-secondary   -> grey
+bg-info        -> blue
+bg-success     -> green
+bg-danger      -> red
+bg-dark        -> black
+bg-white       -> white
+bg-warning     -> yellow
+bg-light       -> close to white
+bg-transparent -> transparent
+
+text color
+
+text-primary
+text-secondary
+text-success
+text-danger
+text-warning
+text-info       -> blue
+text-light      -> close to white
+text-dark       -> black
+text-body       -> pure black
+text-muted      -> grey
+text-black-50   -> 50% black + 50% bg color
+text-white-50   -> 50% white + 50% bg color
+
+To use variables of bootstrap
+h2
+{
+   background   : var(--yellow);
+   color        : var(--purple);
+}
+
+example:
+<div class="container">
+	<div class="row">
+		<div class="col-md-4 bg-primary">
+			<h1 class="text-warning">heading</h1>
+		</div>
+		<div class="col-md-4 bg-secondary">
+			<h1 class="text-black-50">heading</h1>
+		</div>
+		<div class="col-md-4 bg-warning">
+			<h1 class="text-white-50">heading</h1>
+		</div>
+	</div>
+</div>
+--------------------------------------------------------------------------------------
+text formatting
+
+text align
+text-left      text-md-left   -> text-align left
+text-right     text-xl-right  ->  same as above
+text-center    text-sm-center ->
+text-justify   we dont have media queries for justify
+
+text transform
+text-lowercase  -> text-transform:lowercase
+text-uppercase  -> text-transform:uppercase
+text-capitalize -> text-transform:capitalize
+
+font weight
+font-weight-bold -> font-weight:bold
+font-weight-bolder -> font-weight:bolder
+font-weight-light -> font-weight:300
+font-weight-lighter -> font-weight:lighter
+font-weight-normal  -> font-weight:normal
+font-italic   -> font-style:italic
+
+Note: anything written in anchor tag is blue by default. to reset text same with parent, we can use "text-reset" class
+text-reset     -> to assign color from parent div
+text-truncate  -> to hide extra content with ...
+text-nowrap    -> to allow data to exceed from div
+
+text-size for heading
+display-1
+display-2
+display-3
+display-4
+lead      -> used in paragraph to make it slightly bold
+
+
+list inline
+list-inline      -> added in ul
+list-inline-item -> added in li
+
+
+blockquote tag can be used for adding quotes and 
+blockquote-footer can be used for providing name.
+
+
+To allow user for selecting content
+user-select-all
+user-select-none
+user-select-auto
+--------------------------------------------------------------------------------------
+button
+
+btn should be used before using below colors:
+btn-primary   -> blue button
+btn-secondary -> grey 
+btn-success   -> green
+btn-danger    -> red
+btn-warning   -> yellow
+btn-info      -> light blue
+btn-light     -> close to white
+btn-link      -> blue text with whitish button
+btn-dark      -> dark button
+
+border of outline button 
+btn-outline-danger
+similarly, rest of buttons can be added.
+
+example:
+<button type="button" class="btn btn-primary">submit</button>
+<input type="button" class="btn btn-primary" value="input">
+<input type="reset" class="btn btn-primary" value="input">
+<input type="submit" class="btn btn-primary" value="input">
+
+button size
+btn-lg    -> large button
+btn-sm    -> small button
+btn-block -> block of button
+
+state of button in anchor tag
+active
+disabled
+<a href="" class="btn btn-danger disabled">submit</a>
+
+in button tag we need to add separate atribute for active/disabled
+<button type="button" class="btn btn-primary" disabled>submit</button>
+
+button-group
+btn-group
+btn-group-lg  -> for large button groups
+btn-group-sm  -> for small button groups
+<div class="container">
+        <div class="row">
+             <div class="col-3">
+                <div class="btn btn-group-lg">
+                    <div class="btn btn-primary">submit</div>
+                    <div class="btn btn-secondary">submit</div>
+                    <div class="btn btn-warning">submit</div>
+                </div>
+             </div>
+        </div>
+    </div>
+	
+button-toolbar -> add buttons in a row with grouping
+ <div class="container">
+	<div class="row">
+		 <div class="btn-toolbar">
+			<div class="btn btn-group-lg">
+				<div class="btn btn-primary">submit</div>
+				<div class="btn btn-secondary">submit</div>
+				<div class="btn btn-warning">submit</div>
+			</div>
+			<div class="btn btn-group-lg">
+				<div class="btn btn-primary">submit</div>
+				<div class="btn btn-secondary">submit</div>
+				<div class="btn btn-warning">submit</div>
+			</div>
+			<div class="btn btn-group-lg">
+				<div class="btn btn-primary">submit</div>
+				<div class="btn btn-secondary">submit</div>
+				<div class="btn btn-warning">submit</div>
+			</div>
+		 </div>
+	</div>
+
+vertical button group
+btn-group-vertical
+<div class="btn btn-group-vertical">
+	<div class="btn btn-primary">submit</div>
+	<div class="btn btn-secondary">submit</div>
+	<div class="btn btn-warning">submit</div>
+</div>
+
+we can also add icons inside button
+
+dropdown inside button using bootstrap
+add jquery.css, popper.css link tag
+<div class="btn-group">
+	<a href="" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">click</a>
+	<div class="dropdown-menu">
+		<a href="" class="dropdown-item">web design</a>
+		<a href="" class="dropdown-item">web dev</a>
+	</div>
+</div>
+----------------------------------------------------------------------------------------
+list vertical
+list-group              -> to start list group
+list-group-flush        -> to remove all borders
+list-group-item         -> item inside group
+list-group-item-success  -> green coloured list item
+list-group-item-danger
+
+list-group horizontal
+list-group list-group-horizontal
+list-group-item list-group-item-action  -> to remove underline inside anchor tag
+
+example:
+<ul class="list-group">
+	<li class="list-group-item"> item 1</li>
+	<li class="list-group-item"> item 2</li>
+	<li class="list-group-item-primary" style="list-style-type: none;"> item 3</li>
+	<li class="list-group-item-danger" style="list-style-type: none;"> item 4</li>
+</ul>
+<ul class="list-group list-group">
+	<a href="" class="list-group-item list-group-item-action">item 1</a>
+	<a href="" class="list-group-item list-group-item-action">item 2</a>
+	<a href="" class="list-group-item list-group-item-action">item 3</a>
+</ul>
+----------------------------------------------------------------------------------------
+table             -> main class used to add style in table
+table-sm          -> table with small size
+table-striped     -> table with striped rows
+table-dark        -> table with dark rows
+table-borderless  -> table with no border
+table-bordered    -> bordered table
+table-hover       -> hover with dark color
+
+table row light colors
+table-primary     -> blue colored row
+table-secondary   -> grey colored row
+table-success     -> green colored row
+
+table row dark colors
+bg-primary        -> dark blue row
+bg-secondary      -> grey row
+info, success, danger and so on
+
+table header
+thead-dark        -> header row dark
+thead-light       -> header light
+
+table-responsive  -> to make table responsive
+example:
+<div class="container">
+<div class="row">
+	<div class="col-6 table-responsive">
+		<table class="table table-striped">
+			<tr class="bg-warning">
+			<th class="bg-primary">name</th>
+			<th>email</th>
+			</tr>
+			<tr>
+				<td>nitin</td>
+				<td>nitin@gmail.com</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+---------------------------------------------------------------------------------------
+pagination
+page-item
+page-link
+<nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a href="" class="page-link">Previous</a>
+            </li>
+            <li class="page-item">
+                <a href="" class="page-link">1</a>
+            </li>
+            <li class="page-item">
+                <a href="" class="page-link active">2</a>
+            </li>
+            <li class="page-item">
+                <a href="" class="page-link">Next</a>
+            </li>
+        </ul>
+    </nav>
+	
+-----------------------------------------------------------------------------------------
+breadcrumb
+<div class="col-4">
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item">
+			<a href="" >Home</a>
+		</li>
+		<li class="breadcrumb-item">
+			<a href="" >Students</a>
+		</li>
+		<li class="breadcrumb-item">
+			Records
+		</li>
+	</ol>
+</div>
+---------------------------------------------------------------------------------------
+bootstrap 5
+jquery files are ot required now.
+one more breakpoint is added (extra extra large -> xxl)
+-> container has now breakpoint layout -> 
+   container-xxl, container-xl, container-lg, container-md, container-sm
+-> to remove default spaces between columns -> 
+   gx-* (* is 0-5) to remove gutter spaces between columns x-axis,
+   gy-* (* is 0-5) to remove gutter spaces between columns y-axis.
+   gy-xxl-*
+-> line height reduce
+    line-1
+	line-sm
+	line-base
+	line-lg
+-> table border color
+    table table-bordered border-primary
+	table table-bordered border-secondary
+-> align elements in table cell
+    align-top
+	align-middle
+	align-bottom
+	align-baseline
+---------------------------------------------------------------------------------------
+form
+
+form-group -> added in form tag
+form-control -> added in input type
+form-control-lg
+form-control-sm
+form-control-file -> for input type="file"
+form-control-range -> for input type="range"
+
+input type text example:
+<div action="" class="form-group">
+	<label for=""> Name </label>
+	<input type="text" class="form-control">
+</div>
+
+input type password example:
+<div action="" class="form-group">
+	<label for=""> Password </label>
+	<input type="password" class="form-control">
+	<small class="form-text text-muted">Password must be 8-20 character length</small>
+</div>
+
+input type email with no edit feature example:
+<div action="" class="form-group">
+	<label for=""> Email </label>
+	<input type="text" value="avc@gmail.com" class="form-control-plaintext" readonly>
+</div>
+
+input type file example:
+<div action="" class="form-group">
+	<input type="file" class="form-control-file">
+</div>
+
+input type range example:
+<div action="" class="form-group">
+	<input type="range" class="form-control-range">
+</div>
+
+select option example:
+<div action="" class="form-group">
+<label for=""> Country </label>
+<select class="form-control">
+	<option value="">India</option>
+	<option value="">Australia</option>
+	<option value="">Germany</option>
+</select>
+</div>
+
+textarea example:
+div action="" class="form-group">
+	<label for=""> Message </label>
+	<textarea name="" class="form-control"></textarea>
+</div>
+
+checkbox example:
+<div action="" class="form-group">
+	<label >Sports</label>
+	<div class="form-check">
+		<input type="checkbox" class="form-check-input" id="football">
+		<label for="football" class="form-check-label">football</label>
+	</div>
+	<div class="form-check">
+		<input type="checkbox" class="form-check-input" id="cricket">
+		<label for="cricket" class="form-check-label">cricket</label>
+	</div>
+</div>
+
+radio example:
+<div action="" class="form-group">
+	<label >Gender</label>
+	<div class="form-check">
+		<input type="radio" class="form-check-input" name="gender" id="male">
+		<label for="male" class="form-check-label">male</label>
+	</div>
+	<div class="form-check">
+		<input type="radio" class="form-check-input" name="gender" id="female">
+		<label for="female" class="form-check-label">female</label>
+	</div>
+</div>
+-------------------------------------------------------------------------------------
+form horizontal
+method 1 using form-inline
+<form action="" class="form-inline">
+	<div class="form-group">
+		<label for="" class="sr-only">User name</label>
+		<input type="text" class="form-control" placeholder="User name">
+		<button type="submit" class="btn btn-primary">click</button>
+	</div>
+	<div class="form-group">
+		<label for="" class="sr-only">Password</label>
+		<input type="text" class="form-control" placeholder="Password">
+		<button type="submit" class="btn btn-primary">click</button>
+	</div>
+</form>
+
+meethod 2 using col in row
+form-check form-check-inline -> used in checkbox and radio for horizontal
+<form action="">
+<div class="row form-group">
+	<label for="" class="col-sm-2 col-form-label">User name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control form-control-lg">
+	</div>
+</div>
+<div class="row form-group">
+	<label for="" class="col-sm-2 col-form-label">password</label>
+	<div class="col-sm-10">
+		<input type="password" class="form-control form-control-lg">
+	</div>
+</div>
+</form>
+--------------------------------------------------------------------------------------
+custom-select (similar to form-control)
+
+example 1:
+<select class="custom-select" name="country" id="country">
+	<option value="India">India</option>
+	<option value="Bangladesh">Bangladesh</option>
+	<option value="China">China</option>
+	<option value="Australia">Australia</option>
+</select>
+Example 2:
+<select class="custom-select" name="country" id="country" multiple size="3">
+	<option value="India">India</option>
+	<option value="Bangladesh">Bangladesh</option>
+	<option value="China">China</option>
+	<option value="Australia">Australia</option>
+</select>
+
+
+cusom-range
+<div>
+	<input type="range" class="custom-range">
+</div>
+
+
+custom-file
+<div class="col-6">
+	<input type="file" class="custom-file-input">
+	<label for="" class="custom-file-label">choose file</label>
+</div>
+
+
+custom-checkbox
+<div class="custom-control custom-checkbox">
+	<input type="checkbox" class="custom-control-input" id="checkbox1">
+	<label for="checkbox1" class="custom-control-label">golf</label>
+</div>
+<div class="custom-control custom-checkbox">
+	<input type="checkbox" class="custom-control-input" id="checkbox2">
+	<label for="checkbox2" class="custom-control-label">football</label>
+</div>
+<div class="custom-control custom-checkbox">
+	<input type="checkbox" class="custom-control-input" id="checkbox3">
+	<label for="checkbox3" class="custom-control-label">cricket</label>
+</div>
+
+custom-switch
+<div class="custom-control custom-switch">
+	<input type="checkbox" class="custom-control-input" id="checkbox1">
+	<label for="checkbox1" class="custom-control-label">golf</label>
+</div> 
+
+valid and invalid feedback
+<form action="" class="form-inline">
+<div class="form-group">
+	<label for="" class="sr-only">User name</label>
+	<input type="text" class="form-control is-valid" placeholder="User name">
+	<div class="valid-feedback">looks good!</div>
+	<button type="submit" class="btn btn-primary">click</button>
+</div>
+<div class="form-group">
+	<label for="" class="sr-only">Password</label>
+	<input type="text" class="form-control is-invalid" placeholder="Password">
+	<div class="invalid-feedback">Invalid feedback</div>
+	<button type="submit" class="btn btn-primary">click</button>
+</div>
+</form>
+
+input with some text prepend
+<div class="input-group">
+<div class="input-group-prepend">
+	<span class="input-group-text">$</span>
+</div>
+<input type="text" class="form-conrol">
+</div>
+
+input with both append and prepend
+<div class="input-group">
+<div class="input-group-prepend">
+	<span class="input-group-text">$</span>
+</div>
+<input type="text" class="form-conrol">
+<div class="input-group-append">
+	<span class="input-group-text">$</span>
+</div>
+</div>
+
+input with button
+<div class="input-group">
+<input type="text" class="form-conrol">
+<div class="input-group-append">
+	<button class="btn btn-primary">sign in</button>
+</div>
+</div>
+--------------------------------------------------------------------------------------
+navigation bar
+
+flex-column  -> horizontal nav 
+<div class="row" id="header">
+   <ul class="nav flex-column">
+	<li class="nav-item">
+		<a href="" class="nav-link">Home</a>
+	</li>
+	<li class="nav-item">
+		<a href="" class="nav-link">Contact</a>
+	</li>
+	<li class="nav-item">
+		<a href="" class="nav-link active">About us</a>
+	</li>
+	<li class="nav-item">
+		<a href="" class="nav-link disabled">Help</a>
+	</li>
+   </ul>
+</div>
+
+nav-pills -> to have capsules type navigation buttons
+nav-fill/nav-justified  -> to fill all nav option in complete row
+---------------------------------------------------------------------------------------
+nav bars more
+add scripts -> bootstrap, popper & jquery for dropdown and navbar
+
+nav class="navbar navbar-expand-lg navbar-light bg-light">                         -> nav-expand is for horizontal values in navigation bar till large screen
+	<a href="" class="navbar-brand">jadon</a>                                      -> to provide bold company text
+	<button class="navbar-toggler" data-toggle="collapse" data-target="#mynavbar"> -> to add all nav list items inside 3 lines icon when phone (small) screen is available
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="mynavbar">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item"><a href="" class="nav-link">Home</a></li>
+			<li class="nav-item dropdown"><a href="" class="nav-link               -> to add dropdown toggle inside a nav block
+			dropdown-toggle" data-toggle="dropdown">About Us</a>
+			<div class="dropdown-menu">
+				<a href="" class="dropdown-item">Link one</a>
+				<a href="" class="dropdown-item">Link two</a>
+				<a href="" class="dropdown-item">Link two</a>
+			</div>
+			</li>
+			<li class="nav-item"><a href="" class="nav-link">Gallery</a></li>
+			<li class="nav-item"><a href="" class="nav-link">Blog</a></li>
+		</ul>
+		<form action="" class="form-inline">                                       -> to add search input with search button
+			<input type="search" class="form-control mr-sm-2" placeholder="Search">
+			<button class="btn btn-outline-success my-2 my-sm-0">Search</button>
+		</form>
+	</div>
+</nav>
+--------------------------------------------------------------------------------------
+images
+img-fluid     -> responsive image
+img-thumbnail -> add borders around image
+rounded, rounded-left, rounded-pill -> to provide rounds around corner of images
+
+<div class="col-md-4">
+	<img src="images/bill-gates.jpg" alt="" class="img-fluid rounded-pill">
+<div>
+<div class="col-md-4">
+	<img src="images/bill-gates.jpg" alt="" class="img-fluid img-thumbnail">
+<div>
+
+
+To add some text below image use figure and figcaption:
+<div class="col-md-4">
+	<figure class="figure">
+		<img src="images/bill-gates.jpg" alt="" class="figure-img img-fluid">
+		<figcaption class="figure-caption text-right">some text goes here</figcaption>
+	</figure>
+</div>
+--------------------------------------------------------------------------------------
+video
+<div class="row">
+	<div class="col-md-4">
+		<div class="embed-responsive embed-responsive-16by9"> -> 16by9 for screen ratio
+			<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/0GOgPRxbcNc?si=oJEVoikaqT90Gufp" frameborder="0"></iframe>
+		</div>
+	</div>
+</div>
+---------------------------------------------------------------------------------------
+border border-top-0   -> avoid border at top
+border-success, primary, secondary -> colorful borders
+
+<div class="col-md-4">
+	<div class="border border-success border-top-0">
+		Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis similique dolorem quas accusantium explicabo neque fugiat numquam, facilis impedit quos!
+	</div>
+</div>
+
+shadow, shadow-sm, shadow-lg
+<div class="col-md-4">
+	<div class="border shadow-lg border-top-0">
+		Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis similique dolorem quas accusantium explicabo neque fugiat numquam, facilis impedit quos!
+	</div>
+</div>
+---------------------------------------------------------------------------------------
+Notes: 
+1. min.css file is compressed version of file used during deployment to avoid much cost.
+2. always add your css file just below bootstrap.css link tag to override style.
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="css/style.css">
+3. Grid system in bootstrap has 12 cols in row. Hence, col-6 will have size upto 6 grid columns.
+4. Resolution in columns: If col-md-* or any size is used then, column will remain same size till respective screens resolution.

@@ -1,0 +1,212 @@
+power bi
+business intelligence tool to analyze, transform & visualize the data.
+4 components of power bi
+-> power Query - analyze, transform & load the data. Also, clean the data for visualization.
+-> power pivot - data modeling, create relationship between data
+-> power view  - used for charts
+-> power bi service - connect users and to share data amongst each other
+
+
+power bi works
+
+pull data from data sources
+
+ csv
+ sql
+ excel         --->   power bi desktop(developer tool)   ----> power bi service -> share the reports to all users.
+ outlook               cleans data and create reports           
+ pdf
+
+To stay updated with powerbi version
+File -> options & settings -> options -> preview features -> select -> restart app
+
+-------------------------------------------------------------------------------------
+power Bi charts
+Column chart
+get data -> upload excel file -> load data -> new visual (stacked column graph) -> Build a visual x-axis -> add data (any column of excel) -> y axis -> add data(any column of y axis)
+format data(normally at rightmost part) -> format rows colmns, chart colors, title alignment, boldness of values.
+
+Pie chart
+Legend shows which distinct color representing different values
+top right -> Add or remove elements from chart 
+Similarly we can use other charts
+--------------------------------------------------------------------------------------
+Include/Exclude filters
+create column charts with multiple parameter -> select fields with ctrl button -> right click -> include/exclude filter.
+
+Export filtered data 
+create any chart like column chart -> right click the required data by selecting using ctrl button -> file -> export
+make sure you are allowing users to export data
+File -> options & settings -> options -> current file -> report setting -> allows users to export
+
+Map (bubbled map) (imported source data should have geographical data sets like longitude, latitudes)
+use map chart -> build a visual  
+
+filled map can also be used.
+Format -> map settings -> style -> change theme of map
+
+Create table -> visual charts -> table -> select columns from imported data into newly created table
+--------------------------------------------------------------------------------------------
+Conditional formatting : format -> cell elements
+Matrix chart will allow to have unique values of one data in single row, it avoids to repeat the data value in different rows.
+Subtotals can also be added in matrix chart -> row subtotals -> per row level
+--------------------------------------------------------------------------------------------
+Increase font size of overall graph: view -> drop down arrow -> customize current theme -> text.
+Gauge chart is used when we have targets.
+add threshold target value : home -> new measure -> sum(sheet[column]) * somevalue
+
+cards and maps can be used together. if clicked on map, they will show required values in card 
+On card fields, we can right click and choose other option like count.
+ we can add filter on current as well as on all pages.
+---------------------------------------
+3rd party charts - need to sign in for these charts with organization id not with gmail, ymail ids.
+more visual -> from app source -> find 3rd party charts name
+Animated bar chart,
+ drill down donut chart,
+ drill down column charts,
+ word cloud,
+ sankey (provide 1-many relationship)
+ infographic (allows user defined icons instead of simple rectangle as in column chart)
+ play axis (music player) used generally with other graphs like pie chart
+ scroller(similar to news template showing news in channels)
+ sunburst(multi donut chart)
+ histogram,
+-------------------------------------------
+Insert any image in power bi : Insert -> insert image
+Insert any text in power bi : Insert -> insert text
+Insert any shape in power bi : Insert -> insert shape
+Insert any button in power bi : Insert -> insert button 
+(we can also add action to button like button navigation: select image ->format image -> action -> web url/page navigation)
+(we can also add action to button like page naigation: select image ->format image -> action -> page navigation)
+(we can also add action to button like button navigation)
+use ctrl_click to execute action on power bi
+---------------------------------------------
+action Bookmark
+select graph which should be hidden/shown -> view -> selection -> hide graph
+View -> bookmark -> rename  it as hidden
+create another bookmark -> grapha visible option should also be selected.
+drill through can b added through button action
+--------------------------------------------
+Create report containing different charts -> home -> publish -> corporate sign in -> myworkspace or link shown of power bi service
+export : go to power bi service -> signin -> file -> export 
+we can also publish to web but only with paid version
+comments acn also be shared
+subscribe to report and send daily/weekly mails to requested users.
+----------------------------------------------
+Dashboards can be creaed on power bi service
+my workspace -> dahsboard -> + create 
+we can add related graphs here from reports
+Limitation: Dashboards jump to main reports and not interactive, reports are interactive.
+Solution: we should pin entire report to dashboards.
+-----------------------------------------------
+Datasets are also added in workspace while uploading to power bi
+myworkspace -> datasets -> install gateway (act as interface between datasets and local machine data)
+install gateway -> dataset -> setting -> data source credentials -> privacy none
+we can also schedule refresh of data at particular time
+myworkspace -> datasets -> schedule refresh
+--------------------------------------------------
+power query editor
+Note: transform and add column are same, it's just that transform will add into same column but add column will execute queries in new column
+We can add new source -> home -> new source -> browse file
+
+From power bi desktop we can directly goto query editor by home -> transform -> transform data
+
+merge
+get data -> transform data -> select columns in sequence using ctrl -> transform -> merge columns -> after merging got to home -> apply & save
+
+split and trim
+get data  -> get merged excel data -> transform data -> select columns in sequence using ctrl -> transform -> split columns -> after splitting got to home -> apply & save
+
+uppercase/lowercase
+get data  -> get uncleaned data from excel -> transform data -> select columns in sequence using ctrl -> transform -> format -> capitalize columns (makes it in 1st letter capital and rest small)-> after that go to home -> apply & save
+similarly, we can add suffix/prefix.
+
+extract first n characters in new column
+get data  -> get uncleaned data from excel -> transform -> select columns in sequence using ctrl -> add column/transform -> extract -> first n characters or last n characters -> -> after that go to home -> apply & save
+
+Mr@nitin&jadon -> data is uncleaned -> delimmiter can be used
+get data -> get uncleaned data from excel -> transform -> select columns in sequence using ctrl -> add column/transform -> extract -> text after delimiter/text before delimiter/ text between delimiter -> after that go to home -> apply & save
+----------------------------------------------
+date power query
+
+get date data -> transform -> select columns in sequence using ctrl -> add column/transform -> date -> apply and save
+
+We can also subtract 2 date columns/earliest date/ later date from date section
+
+Date -> day -> name of the day
+Date -> month -> name of month
+similarly, we can get day of week/month/year, week of month/year
+From time, we can get time separately
+
+we can get age from add column/extract -> duration -> age
+--------------------------------------------------
+arithmetic operations in power query
+get data -> select columns -> transform/add column -> standard -> select multiply
+we can change the applied formula from "applied steps" if multiplication with some specific values should be done.
+
+rounding off number
+select column -> transform/add column -> rounding -> round up/down
+
+check if even/odd/sign of number
+select column -> transform/add column -> information -> even/odd/sign
+-----------------------------------------------
+Column position does not matter names matter
+
+Multiple csv from folder
+make sure folder has only csv files -> copy path
+get data -> folder -> path -> transform -> and perform required operations
+
+For excel with multiple sheets
+get data -> folder -> path -> transform -> home -> append queries select all sheets
+similary, we can append queries from different data sources like from csv and excel by using above step.
+Now, we need to load only appended data into power bi desktop -> right click unwanted file -> 
+
+Multiple excel files from folder
+make sure folder has only excel files -> copy path
+get data -> folder -> path -> transform
+Note: Content and name columns are important
+custom column -> use command Excel.workbook(Content)
+expand new column with table only -> expand data of tables from small cursor at heading.
+
+Merge tables with same id (same process tables in separate files and same files)
+get data -> documents with 2 table ->transform ->home -> merge queries -> select 2 tables and slect common relation of id -> apply	
+
+merge columns of 2 tables -> home -> merge queries
+
+create new column with pattern similar to selected column
+new Column with values similar to first column can be done by home -> column from examples
+
+If new column to be created with If else of some column value like if we have profit 200-300 = average profit, if we have profit >400 = max profit
+then add column -> conditional column
+
+if some values are not present in column then, transform -> fill -> fill down
+
+Group by can also be used for grouping with same column name
+transform -> group by
+
+remove rows : home -> remove rows/remove blank rows
+to have one single column instead of many: right click -> unpivot columns
+
+errors
+remove rows : home -> remove row -> remove errors/remove blank rows
+replace errors: transform -> replace errors
+
+home -> keep rows : keep selected rows only
+------------------------------------------------------------
+Copy and send query to another person
+
+view -> advanced editor -> copy query
+
+In avdanced editor we can write custom m language program like
+let
+  a =10,
+  b = 20,
+  c = a+b
+in
+  c
+
+Custom queries can be provided in (add column -> custom column)
+like  Date.IsInCurrentMonth([City])
+To get list of all m language functions
+home -> new source -> blank query -> =#shared
+We can search in column filter of shown functions Like "Date", "Text", "Number"

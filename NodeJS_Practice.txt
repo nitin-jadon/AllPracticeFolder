@@ -1,0 +1,132 @@
+Install Node js.
+set "C:\Program Files\nodejs" in user variables of environment variables.
+In cmd, write commands:  
+node -v
+npm install npm --global
+open vscode then, terminal
+type npm init  (package.json file is created)
+
+create app.js
+terminal type "npm install express --save"
+install nodemon -> automatically restarting the node application when file changes in the directory are detected.
+command -> npm install -g nodemon
+nodemon app
+
+
+Install mongodb drivers on nodejs 
+Open new VSCODE terminal
+npm install mongodb --save
+
+
+create DB.js file
+2 steps
+first to setup initial connection with mongodb
+second to get connection from db
+
+use this 2 variables in main file to get data from mongodb
+
+Install mongodb drivers on nodejs 
+	Open new VSCODE terminal
+	npm install mongodb --save
+
+Print all documents of mongodb collections thorugh nodejs as follows:
+app.get("/books", (req, res) => {
+    let books = []
+    db.collection('books')
+    .find()//cursor in node js, returns cursor of list of books 
+    .sort({author: 1}) //sorting books documents based on author
+    .forEach(element => books.push(element))// iterate batch of books documents and pushing elements to array. asynchronous method so will take time to push all data in books array
+    .then(() => { res.status(200).json(books)})//  once all data is pushed, send res with books info
+    .catch(() => res.status(500).json({error: 'Could not fetch the documents.'}));// if error occurs then error msg.
+})
+
+
+Fetch document with id
+const {ObjectId} = require('mongodb')
+
+app.get("/books/:id", (req, res) => {
+    if(ObjectId.isValid(req.params.id)){
+        db.collection('books')
+        .findOne({_id: new ObjectId(req.params.id)})
+        .then(doc => {res.status(200).json(doc)})
+        .catch(err => res.status(500).json({error: 'Could not fetch the document'}))
+    }
+    else{
+        res.status(500).json({error: 'not a valid document id'})
+    }
+    
+})
+
+post request to add new document in mongodb through nodejs 
+const app = express()
+app.use(express.json())// used for using body of request
+
+app.post("/books", (req, res) => {
+    const book = req.body
+
+    db.collection('books')
+    .insertOne(book)
+    .then(result => {
+        res.status(201).json(result)
+    })
+    .catch(err => {res.status(500).json({err: "insertion is not possible."})
+    })
+})
+
+//delete document by id
+app.delete("/books/:id", (req, res) =>
+{
+    if(ObjectId.isValid(req.params.id)){
+        db.collection('books')
+        .deleteOne({_id: new ObjectId(req.params.id)})
+        .then(result => {res.status(200).json(result)})
+        .catch(err => res.status(500).json({error: 'Could not delete the document'}))
+    }
+    else{
+        res.status(500).json({error: 'not a valid document id'})
+    }
+})
+
+//update document fields
+app.patch("/books/:id", (req, res) =>
+{
+    const update = req.body
+    if(ObjectId.isValid(req.params.id)){
+        db.collection('books')
+        .updateOne({_id: new ObjectId(req.params.id)}, {$set : update})
+        .then(result => {res.status(200).json(result)})
+        .catch(err => res.status(500).json({error: 'Could not update the document'}))
+    }
+    else{
+        res.status(500).json({error: 'not a valid document id'})
+    }
+})
+
+
+//pagination in mongodb and nodejs
+skip(n) -> to skip n number of books
+limit(n) -> to print n number of books per page
+app.get("/books", (req, res) => {
+    const booksPerPage = 3
+    const pageNumber = req.query.p || 0
+
+    let books = []
+    db.collection('books')
+    .find()//cursor in node js, returns cursor of list of books 
+    .sort({author: 1}) //sorting books documents based on author
+    .skip(booksPerPage * pageNumber)// skip first 3*pagenumber previous books
+    .limit(booksPerPage)//show 3 books per page
+    .forEach(element => books.push(element))// iterate batch of books documents and pushing elements to array. asynchronous method so will take time to push all data in books array
+    .then(() => { res.status(200).json(books)})//  once all data is pushed, send res with books info
+    .catch(() => res.status(500).json({error: 'Could not fetch the documents.'}));// if error occurs then error msg.
+})
+
+
+Mongodb atlas: https://www.mongodb.com/atlas/database
+jordannitin
+ekHGdn1V7O1NVzCC
+
+create account and create database -> free -> create cluster
+network access -> set with your local or all ip address
+"Connect" with DB and get the link like this: 'mongodb+srv://jordannitin96:<password>@cluster0.w7zscsl.mongodb.net/
+use this link in our code.

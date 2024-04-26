@@ -1,0 +1,31 @@
+GitHub
+
+Login -> + button at right -> New Repository -> Repo name and description
+
+Method 1:
+"create a new file" link -> filename -> add data -> commit file
+
+Method 2:
+Install git bash
+right click on folder to be committed -> open git bash
+git init -> .git folder will be created
+
+Required only during first login
+	git config --global user.name "GeeksforGeeks"
+	git config --global user.email "GFGexample@gmail.orgg"
+	git config --global user.password "1234321"
+	git config --global credential.helper store
+	git config --list --show-origin
+
+git remote add origin https://github.com/nitin-jadon/microservices.git
+git branch -M main (check if branch is master or main and use command accordingly)
+git remote add origin "https://github.com/nitin-jadon/microservices.git" (copy from git hub repo)
+git add .
+git commit -m "initial commit" -> for first time commiting a code
+git push -u origin main (check if main or master)
+ 
+
+
+
+
+

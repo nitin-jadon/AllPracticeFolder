@@ -1,0 +1,491 @@
+Spring mvc
+
+1. create mysql database.
+	Sql setup:
+	sql workbench -> login -> create database schema(contactdb)
+	Use sql commands:
+	1. use contactdb;
+	2. create table contact(
+		contact_id int(11) not null auto_increment,
+		name varchar(45) not null,
+		email varchar(45) not null,
+		address varchar(100) not null,
+		phone varchar(10) not null,
+		primary key(contact_id)
+		);
+	3. desc contact;
+------------------------------------------------------------------------------------------------------------------------------------------------
+2. create project setup.
+	eclipse setup:
+	1. Open eclipse -> new -> dynamic web project -> project name -> target runtime(tomcat)
+	2. If tomcat not present, install tomcat server on particular directory & Window > Preferences > Server > Runtime Environment ->add tomcat server -> apply
+	3. Open eclipse -> new -> dynamic web project -> project name -> target runtime(tomcat) -> finish
+	4. right click on project package -> configure -> convert to maven project -> set groupId -> packaging (WAR)
+------------------------------------------------------------------------------------------------------------------------------------------------
+3. specify dependencies(maven).
+   Note: if pom.xml is not able to download from external resources (Window -> Preference -> Maven -> tick the option ('download artifact javadoc'))
+   pom.xml configuration:
+Below config should be added just after build tag is ended </build>.
+Note: spring orm is used for jpa repository dependencies
+<properties>
+	  <java.version>1.7</java.version>
+    <spring.version>4.0.3.RELEASE</spring.version>
+    <cglib.version>2.2.2</cglib.version>
+  </properties>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>org.springframework</groupId>
+  		<artifactId>spring-context</artifactId>
+  		<version>${spring.version}</version>
+  	</dependency>
+  	<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-framework-bom</artifactId>
+            <version>4.0.3.RELEASE</version>
+            <type>pom</type>
+            <scope>import</scope>
+    </dependency>
+  	<dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>${spring.version}</version>
+        <type>jar</type>
+        <scope>compile</scope>
+    </dependency>
+    <!-- CGLib for @Configuration -->
+    <dependency>
+        <groupId>cglib</groupId>
+        <artifactId>cglib-nodep</artifactId>
+        <version>${cglib.version}</version>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.1.0</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>javax.servlet.jsp</groupId>
+        <artifactId>javax.servlet.jsp-api</artifactId>
+        <version>2.3.1</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>jstl</groupId>
+        <artifactId>jstl</artifactId>
+        <version>1.2</version>
+    </dependency>
+    
+  	<dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.33</version>
+    </dependency>
+  </dependencies>
+------------------------------------------------------------------------------------------------------------------------------------------------
+4. Code model class
+    create model class in model package
+	private int id;
+	private String name;
+	private String email;
+	private String address;
+	private String phone;
+	with getter/setter and parameterized constructor
+------------------------------------------------------------------------------------------------------------------------------------------------
+5. code DAO Classes
+    create interface for DAO as well as implementation class.
+	DAO implemetation
+	Example:
+    private JdbcTemplate jdbcTemplate;
+	
+	public ContactDAOImpl(DataSource dataSource) {
+		jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+
+	@Override
+	public int save(Contact contact) {
+		// TODO Auto-generated method stub
+		String sql = "INSERT INTO CONTACT (name, email, address, phone) VALUES(?,?,?,?)";
+		return jdbcTemplate.update(sql, contact.getName(),
+				contact.getEmail(),
+				contact.getAddress(),
+				contact.getPhone());
+	}
+
+	@Override
+	public int update(Contact contact) {
+		// TODO Auto-generated method stub
+		String sql = "UPDATE Contact SET name =?, email=?, address=?, phone=? where contact_id=?";
+		return jdbcTemplate.update(sql, contact.getName(),
+				contact.getEmail(),
+				contact.getAddress(),
+				contact.getPhone(),
+				contact.getId());
+	}
+
+	@Override
+	public List<Contact> list() {
+		// TODO Auto-generated method stub
+		String sql = "Select * from Contact";
+		RowMapper<Contact> rowMapper = new RowMapper<Contact>() {
+			
+			@Override
+			public Contact mapRow(ResultSet rs, int rowNum) throws SQLException {
+				int id = rs.getInt("contact_id");
+				String name = rs.getString("name");
+				String email = rs.getString("email");
+				String address = rs.getString("address");
+				String phone = rs.getString("phone");
+				return new Contact(id, name, email, address, phone);
+			}
+		};
+		return jdbcTemplate.query(sql, rowMapper);
+	}
+
+	@Override
+	public int delete(int id) {
+		// TODO Auto-generated method stub
+		String sql = "Delete from Contact where contact_id = " + id;
+		
+		return jdbcTemplate.update(sql);
+	}
+
+	@Override
+	public Contact get(int id) {
+		// TODO Auto-generated method stub
+		String sql = "Select * from Contact where contact_id = " + id;
+		ResultSetExtractor<Contact> extractor = new ResultSetExtractor<Contact>() {
+			
+			@Override
+			public Contact extractData(ResultSet rs) throws SQLException, DataAccessException {
+				// TODO Auto-generated method stub
+				if(rs.next())
+				{
+					String name = rs.getString("name");
+					String email = rs.getString("email");
+					String address = rs.getString("address");
+					String phone = rs.getString("phone");
+					return new Contact(id, name, email, address, phone);
+				}
+				return null;
+			}
+		};
+		
+		return jdbcTemplate.query(sql, extractor);
+	}
+------------------------------------------------------------------------------------------------------------------------------------------------
+6.  Test JUNIT
+	right click the src folder -> new -> source folder -> test
+	right click the DAO interface class -> new -> junit test case -> new junit jupiter test
+	source folder -> browse -> test -> next -> select all -> finish -> add junit 5 library to build path
+	open junit test file
+    private DriverManagerDataSource dataSource;
+	private contactDAO dao;
+	@BeforeEach
+	void setupBeforeEach()
+	{
+		dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql://localhost:3306/contactdb");
+		dataSource.setUsername("root");
+		dataSource.setPassword("admin");
+		dao = new ContactDAOImpl(dataSource);
+	}
+	
+	@Test
+	void testSave() {
+		
+		Contact contact = new Contact("Nitin", "Nitin@gmail.com", "tri nagar", "9090909");
+		int result = dao.save(contact);
+		assertTrue(result > 0);
+	}
+
+	@Test
+	void testUpdate() {
+		Contact contact = new Contact(1, "NitinJadon", "NitinJadon@gmail.com", "Melbourne", "614234");
+		int result = dao.update(contact);
+		assertTrue(result > 0);
+	}
+
+	@Test
+	void testList() {
+		List<Contact> ls = dao.list();
+	    assertTrue(ls.size() > 0);
+	
+	}
+
+	@Test
+	void testDelete() {
+		int id = 1;
+		int result = dao.delete(id);
+		assertTrue(result > 0);
+	}
+
+	@Test
+	void testGet() {
+		int id = 1;
+		Contact contact = dao.get(id);
+		if(contact != null)
+		{
+		    System.out.println(contact);
+		}
+		assertNotNull(contact);
+	}
+   On right side -> right click on test method -> run as -> junit test
+	
+------------------------------------------------------------------------------------------------------------------------------------------------
+7. Configure spring mvc DispatcherServlet
+   Servlet is a class that extends the capabilities of the servers and responds to the incoming requests. It can respond to any requests.
+   Servlet is a web component that is deployed on the server to create a dynamic web page.
+   DispatcherServlet acts as the Front Controller for Spring-based web applications.  Any request is going to come into our website the front controller is going to stand in front and is going to accept all the requests and once the front controller accepts that request then this is the job of the front controller that it will make a decision that who is the right controller to handle that request.
+
+   public class WebAppInitializer implements WebApplicationInitializer{
+	@Override
+	public void onStartup(ServletContext servletContext) throws ServletException {
+		// TODO Auto-generated method stub
+		AnnotationConfigWebApplicationContext appContext = new AnnotationConfigWebApplicationContext();
+		appContext.register(SpringMvcConfig.class);
+		ServletRegistration.Dynamic dispatcher = servletContext.addServlet("SpringDispatcher", new DispatcherServlet(appContext));
+		dispatcher.setLoadOnStartup(1);
+		dispatcher.addMapping("/");
+	    }
+    }
+------------------------------------------------------------------------------------------------------------------------------------------------
+8. configure spring mvc
+   SpringMvcConfig implements webMvcConfigurer to configure db configurations, view resolver where we set prefix & suffix for the page who is going to handle request.
+    @Bean
+	public DataSource getDataSource()
+	{
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql://localhost:3306/contactdb");
+		dataSource.setUsername("root");
+		dataSource.setPassword("admin");
+		return dataSource;
+	}
+	@Bean
+	public ViewResolver getViewResolver()
+	{
+		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+		resolver.setPrefix("/WEB-INF/views/");
+		resolver.setSuffix(".jsp");
+		return resolver;
+	}
+	@Bean
+	public contactDAO getContactDAO()
+	{
+		return new ContactDAOImpl(getDataSource());
+	}
+------------------------------------------------------------------------------------------------------------------------------------------------
+9. code spring controller
+   handle web request and sent the request to respective .jsp pages.
+   @Autowired
+	private contactDAO dao;
+	
+	@RequestMapping(value = "/")
+	public ModelAndView listContact(ModelAndView model)
+	{
+		List<Contact> listContact = dao.list();
+		model.addObject("listContact", listContact);
+		model.setViewName("index");
+		return model;
+	}
+	
+	@RequestMapping(value = "/newContact", method = RequestMethod.GET)
+	public ModelAndView newContact(ModelAndView model)
+	{
+		Contact newContact = new Contact();
+		model.addObject("contact", newContact);
+		model.setViewName("contact_form");
+		return model;
+	}
+	
+	@RequestMapping(value = "/saveContact", method = RequestMethod.POST)
+	public ModelAndView saveContact(@ModelAttribute Contact contact) {
+	    dao.save(contact);
+	    return new ModelAndView("redirect:/");
+	}
+	
+	@RequestMapping(value = "/updateContact", method = RequestMethod.POST)
+	public ModelAndView updateContact(@ModelAttribute Contact contact) {
+	    dao.update(contact);
+	    return new ModelAndView("redirect:/");
+	}
+	
+	@RequestMapping(value = "/deleteContact", method = RequestMethod.GET)
+	public ModelAndView deleteContact(HttpServletRequest request) {
+	    int contactId = Integer.parseInt(request.getParameter("id"));
+	    dao.delete(contactId);
+	    return new ModelAndView("redirect:/");
+	}
+	
+	@RequestMapping(value = "/editContact", method = RequestMethod.GET)
+	public ModelAndView editContact(HttpServletRequest request) {
+	    int contactId = Integer.parseInt(request.getParameter("id"));
+	    Contact contact = dao.get(contactId);
+	    ModelAndView model = new ModelAndView("contact_form");
+	    model.addObject("contact", contact);
+	 
+	    return model;
+	}
+------------------------------------------------------------------------------------------------------------------------------------------------
+10. code JSPs
+    InternalResourceViewResolver
+    The InternalResourceViewResolver allows mapping webpages with requests. /hello is requested, DispatcherServlet will forward the request to the prefix + viewname + suffix = /WEB-INF/jsp/hello. jsp.
+	Note: viewName in model of controllers should match with <name>.jsp present in WEB-INF folder.
+	right click on WEB-INF -> new -> folder -> name it "views"
+	right on views -> new -> jsp file
+	right click on project package -> maven -> update project
+	at bottom -> servers -> tomcat server -> right click -> add/remove -> select project name -> add
+	right click -> maven -> update project
+
+    contact_form.jsp
+	<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+	<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+	<!DOCTYPE html>
+	<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>New/Edit Contact</title>
+	</head>
+	<body>
+		<div align="center">
+			<h1>New/Edit Contact</h1>
+			<form:form action="saveContact" method="post" modelAttribute="contact">
+			<table>
+				<form:hidden path="id"/>
+				<tr>
+					<td>Name:</td>
+					<td><form:input path="name" /></td>
+				</tr>
+				<tr>
+					<td>Email:</td>
+					<td><form:input path="email" /></td>
+				</tr>
+				<tr>
+					<td>Address:</td>
+					<td><form:input path="address" /></td>
+				</tr>
+				<tr>
+					<td>Telephone:</td>
+					<td><form:input path="phone" /></td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center"><input type="submit" value="Save"></td>
+				</tr>
+			</table>
+			</form:form>
+		</div>
+	</body>
+	</html>
+	
+	index.jsp
+	<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+	<!DOCTYPE html>
+
+	<html>
+	<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+			<title>Contact Manager Home</title>
+		</head>
+		<body>
+			<div align="center">
+				<h1>Contact List</h1>
+				<h3><a href="newContact">New Contact</a></h3>
+				<table border="1">
+					<th>No</th>
+					<th>Name</th>
+					<th>Email</th>
+					<th>Address</th>
+					<th>phone</th>
+					<th>Action</th>
+					 
+					<c:forEach var="contact" items="${listContact}" varStatus="status">
+					<tr>
+						<td>${status.index + 1}</td>
+						<td>${contact.name}</td>
+						<td>${contact.email}</td>
+						<td>${contact.address}</td>
+						<td>${contact.phone}</td>
+						<td>
+							<a href="editContact?id=${contact.id}">Edit</a>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<a href="deleteContact?id=${contact.id}">Delete</a>
+						</td>
+								 
+					</tr>
+					</c:forEach>             
+				</table>
+			</div>
+		</body>
+	</html>
+11. test application
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Spring MVC Notes:
+1. Make sure database, username and password configured is present in database server like in mysql.
+2. eclipse ssetup for dynamic web project
+   1. Open eclipse -> new -> dynamic web project -> project name -> target runtime(tomcat)
+   2. If tomcat not present, install tomcat server on particular directory & Window > Preferences > Server > Runtime Environment ->add tomcat server -> apply
+   3. Open eclipse -> new -> dynamic web project -> project name -> target runtime(tomcat) -> finish
+   4. right click on project package -> configure -> convert to maven project -> set groupId -> packaging (WAR)
+3. if pom.xml is not able to download from external resources (Window -> Preference -> Maven -> tick the option ('download artifact javadoc')).
+4. dependencies and properties tag should be added just after closing build tag.
+5. Make sure in controller class model.setViewName("<name>"), this <prefix>name<suffix> file should be present in WEB-INF/<viewname> directory.
+   Example: /hello is requested, DispatcherServlet will forward the request to the prefix + viewname + suffix = /WEB-INF/jsp/hello. jsp.
+6. If project changes are not reflected then, perform following operation:
+   Always update project when new dependencies are added in pom.xml file. right click project package -> maven -> update project.
+   At bottom, servers -> right click tomcat -> remove project -> update project by above maven update project step
+   again, at bottom servers -> right click tomcat -> add project -> right click server -> restart server
+7. if pom.xml is not able to download from external resources (Window -> Preference -> Maven -> tick the option ('download artifact javadoc'))
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Notes: Spring boot
+1.	yml file is used in complex projects. Plus it has tree structure and support multiple datat types. Properties files has key value structure.
+2.	@Builder -> helps to create object of class and set values in one line by className.builder().fields(setField).build().
+3.	If pathVariable name and parameter is same then, we do not need to provide name from postman.
+4.	# sometimes dialect related error can come when hibernate can not be detected.
+    # Use ctrl+n -> search mysqlDialect
+jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect #dialect config is taken by default
+
+5.	@Transient is used when particular property of entity class should not be stored in DB.
+6.	If project is loaded manually then, click on right side maven button -> + -> project directory (always pick your parent directory of pom.xml)
+7.	Manual Exceptions are extended by RUNTIMEEXception and globalExceptionHandler is created with @RestControllerAdvice and   
+    @ExceptionHandler(ManualException.class) name.
+8.	Another project is added in our project by opening + button of maven present at right side of coding area.
+9.	@Document( “documentname”) is used instead of @Entity for mongoDB.
+10.	Id is be default autogenerated in mongodb.
+11. to enable logs in class, use @Slf4j and use log.info().
+12. When pathVariable name present in annotation and method parameter name is same then, we do not need to provide name inside pathvariable
+13. To create object & set values of class, use @Builder annotation and use this class builder in another class where values need to be set.
+    Ex: Rating rating = Rating.builder().rating(10).userId("").hotelId("").feedback("feign testing feedback").build();
+14. Values present in application.yml are taken priority-wise from top to bottom.
+15. Also, reload dependencies when new dependency is added.
+16. @transactional is used for transactions operations. If operation is successful, then changes done in db are COMITTED else rollback operation is performed on db.
+
+Spring boot
+module of spring, build on top of spring for rapid application development.
+Spring boot = Spring + minimal config + embedded server like tomcat
+scans class path
+
+dependency injection is a design pattern to implement ioc.
+IOC are responsible to inject dependencies whose metadata is provided either by configurations or annotations.
+
+Types of Dependency injection:
+constructor, method, property

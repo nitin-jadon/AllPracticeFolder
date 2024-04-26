@@ -1,0 +1,553 @@
+Microservices
+
+Before microservices - Monolithic architecture
+1. All software components are combined in single bundle.
+2. Same single code base.
+3. Change in one component leads to redeployment of whole project
+4. Buidiling problem : developers ha to communicate
+5. Problem in scaling and cumbersome over time.
+
+Microservices
+1. Large apps divide into smaller parts.
+2. All components have different code base.
+3. Communicate with each other through rest apis.
+4. Each module managed independently.
+5. Handling all different components is complex.
+
+If client countor project is small, then monolithic architecture should be used.
+----------------------------------------------------------
+Service Registry Server
+
+Will keep track of all services. user, rating and hotel service ports and ip address. Will help to use service-name instead of ip address using service registry. It has info of which service is up or down.
+Add @EnableEurekaServer in main method of service registry project.
+
+Dependencies:
+Cloud bootstrap(Spring cloud)
+Eureka server (Spring cloud discovery)
+
+application.yml
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false     #this is done so that service registry will not register itself with other services which needs to be monitored
+    fetch-registry: false           #done so that it will not fetch registry details of itself to not to get registered
+server:
+  port: 8761
+------------------------------------------------------------
+Service registry client
+
+To register clients like user service, hotel service and rating service used in project. Service registry client is used.
+
+To avoid errors:
+Go to spirng initializr site. add dependencies 
+Cloud bootstrap(Spring cloud) 
+Eureka discovery client (Spring cloud discovery)
+
+Click Explore -> copy spring cloud version written just after java version
+<properties>
+	<java.version>17</java.version>
+	<spring-cloud.version>2023.0.0</spring-cloud.version>
+</properties>
+
+Copy netflix eureka discovery client dependencies and paste it in our pom.xml file.
+Copy dependency management tag and paste it in pom.xml just after </dependencies> tag -> reload project.
+<dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-dependencies</artifactId>
+			<version>${spring-cloud.version}</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+	</dependencies>
+</dependencyManagement>
+
+client configuration for eureka
+spring.application.name=USER-SERVICE #so that application service name is visible on eureka 
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true       #fetch registry details of service registry so that it will register with server
+    register-with-eureka: true #register will eureka service registry
+
+
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka # So that it will land on this ip address of eureka
+
+in main method, add @EnableDiscoveryClient
+
+Run -> in console log -> we see ("Registering application USER-SERVICE with eureka with status UP")
+Similarly, we can add other services with service registry. 
+-----------------------------------------------------------------------------
+Communication of services with each other
+
+Method 1 : using restTemplate
+Create Configuration class which will return bean of restTemplate.
+Autowire restTemplate in class where other service should be used.
+use restTemplate methods to use services of modules.
+@Configuration
+public class Config{
+    @Bean
+    @LoadBalanced// added for application name instead of using hardcoded ports and hostname
+    public RestTemplate restTemplate()
+    {
+        return new RestTemplate();
+    }
+}
+
+Example 1:
+get ratings of user id from user service with help of rating service.
+
+ArrayList<Rating> userRatings = restTemplate.getForObject("http://localhost:8083/ratings/users/" + userId, ArrayList.class);
+user.setRatings(userRatings);
+
+Example 2:
+user -> rating -> hotel
+If we want to extract hotel information into rating and Rating info is sent to user service then,
+
+Rating[] userRatings = restTemplate.getForObject("http://localhost:8083/ratings/users/" + userId, Rating[].class);
+log.info("{}", userRatings);
+List<Rating> ratingList = Arrays.stream(userRatings).toList();
+
+ratingList.stream().map(rating ->{
+   ResponseEntity<Hotel> hotel = restTemplate.getForEntity("http://localhost:8082/hotels/" + rating.getHotelId(), Hotel.class);
+   rating.setHotel(hotel.getBody());
+   log.info("{}", hotel.getStatusCode());
+   return rating;
+}).collect(Collectors.toList());
+
+user.setRatings(ratingList);
+
+Here, localhost and port can vary depending where the project is deployed.
+For that, add annotation @LoadBalanced in configuration bean class of restTemplate and use application service name instead of localhost:port
+Example:
+http://localhost:8082/hotels/  -> http://HOTEL-SERVICE/hotels/
+
+Method 2: using feign client
+Steps 1: In main method add @EnableFeignClients
+
+steps 2: Create hotelService interface as follows:
+@FeignClient(name = "HOTEL-SERVICE")
+public interface HotelService {
+    @GetMapping("/hotels/{hotelId}")
+    public Hotel getHotel(@PathVariable String hotelId);
+}
+steps 3: autowire it in userService class
+Step 4:use method to retrieve data
+Example:
+Rating[] userRatings = restTemplate.getForObject("http://RATING-SERVICE/ratings/users/" + userId, Rating[].class);
+log.info("{}", userRatings);
+List<Rating> ratingList = Arrays.stream(userRatings).toList();
+
+ratingList.stream().map(rating ->{
+	rating.setHotel(hotelService.getHotel(rating.getHotelId()));
+   return rating;
+}).collect(Collectors.toList());
+
+user.setRatings(ratingList);
+
+----------------------------------------------------------
+Testing of methods
+
+In test file, autowire class which needs to be tested. Make sure class is @Service or @Component.
+Provide values to test method may be using @Builder annotation and use this class builder in test class where values need to be set.
+Example:
+@Test
+void createRating()
+{
+	Rating rating = Rating.builder().rating(10).userId("").hotelId("").feedback("feign testing feedback").build();
+	Rating savedRating = ratingService.createRating(rating);
+	System.out.println("rating saved");
+}
+----------------------------------------------------------
+API gateway
+It is needed as client can not remember all the ips of different services along with ports.
+Ports can change. client just needs to remember API gateway hostname to use any service.
+
+1. Open official documentation of spring cloud gateway version you are using.
+Read which version of spring boot it supports along with other dependencies like webflux.
+In my case, I am using version 4.0.9 which supports spring boot version 3.2.2.
+2. Go to website of springInitialzer of IO
+Add dependencies:
+Cloud bootstrap (spring cloud)
+Gateway (Spring cloud routing)
+Lombok
+Spring reactive web (Web)  {webflux}
+Eureka discovery client (Spring cloud discovery) (It will be used as service for registering in service registry)
+3. Add project and add @EnableDiscoveryClient on main method.
+4. provide yml configuration as in other services with spring.application.name, server.port, eureka and gateway config.
+Example:
+
+server:
+  port: 8084
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway :
+      mvc:
+        routes:
+          - id: USER-SERVICE
+            uri: lb://USER-SERVICE #@LoadBalanced is used hence, port and ip is not required, can directly give name of service
+            predicates:
+              - Path=/users/**     #if we want to add multiple urls /users/**, /hotels/**   (for all /**)
+
+          - id: HOTEL-SERVICE
+            uri: lb://HOTEL-SERVICE
+            predicates:
+              - Path=/hotels/**
+
+          - id: RATING-SERVICE
+            uri: lb://RATING-SERVICE
+            predicates:
+              - Path=/ratings/**
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true       #fetch registry details of service registry so that it will register with server
+    register-with-eureka: true #register will eureka service registry
+
+
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka # So that it will land on this ip address of eureka
+
+6. Re-run gateway service and we can access all services through http://localhost:8084/
+
+
+----------------------------------------------------------
+Config server
+It is used to externalize local configuration of all different services to github or any external entity.
+It is used to get external configurations from github to provide to different services.
+
+get configurations from github -> configserver -> userService, hotelService, ratingService
+
+GitHub Login -> + button at right -> New Repository -> Repo name and description
+"create a new file" link -> application.yml -> add data -> commit file
+Similarly, create application-prod.yml and application-dev.yml.
+
+Create spring initialzer project with dependencies
+Config server
+eureka discovery client 
+
+Add project -> add @EnableConfigServer, @EnableDiscoveryClient in main method.
+
+Add application.yml configuration
+server:
+  port: 8085
+spring:
+  application:
+    name: CONFIG-SERVER
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/nitin-jadon/microservice-config/
+          clone-on-start: true
+
+re-run project and go to eureka server -> config server -> change url of actuator with /application/default
+Example: http://host.docker.internal:8085/application/default -> this will give config of application.yml.
+Example: http://host.docker.internal:8085/application/dev -> this will give config of application-dev.yml.
+Configuration will be recieved. 
+----------------------------------------------------------------------------------------
+Config Client
+
+Used to get configurations from config server to our services like userService. Generally, we add common configurations which are same for all services in github or any other external entity. 
+1. Go to initializr site -> add dependency -> config client -> copy dependency from explore and add it into our service.
+<dependency>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-starter-config</artifactId>
+</dependency>
+2. Reload dependencies and open application.yml file of user service add configuration
+spring:
+  config:
+    import: optional:configserver:http://localhost:8085 #ip address of config server
+Note: if configuration from other document needs to be fetched then,
+Spring
+  profiles:
+    active: dev #import config from application-dev.yml present on github through config server
+3. run config server and configuration will be added.
+4. Similarly, follow above steps in other services where configuration from config server needs to be added.
+--------------------------------------------------------------------------------------------
+Fault tolerance
+
+In real world, services are relied on each other.
+If one service goes down then, other service which is request the data will go in blocked state as it is not getting any response.
+Ex-> userService -> get info from -> ratingService -> get info from -> HotelService
+if hotelService goes down then, userService & ratingService will go in blocked state.
+For this purpose, fault tolerance is required.
+
+CircuitBreaker Fault tolerance Design pattern
+Initially, there is "Closed" connection between services -> If service goes down and calls are getting failed exceeding threshold count -> circuit becomes "Open" -> after some duration circuit becomes "Half_Open" which allows few calls to request another service to check if calls are getting success response or not -> If calls are getting passed exceeding threshold count then "Closed" connection is established else "Open" connection.
+
+3 dependencies need to be added:
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+<dependency>
+	<groupId>io.github.resilience4j</groupId>
+	<artifactId>resilience4j-spring-boot3</artifactId>
+	<version>2.0.2</version>
+</dependency>
+
+application.yml configuration:
+
+management:
+  health:
+    circuit breakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health # done to expose health of actuator where wew can check how many calls are failed or passed and circuit state
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      ratingHotelBreaker: # use breaker name same as in java code
+        registerHealthIndicator: true
+        event-consumer-buffer-size: 10
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 5 # min this number of calls should be done to take decision of state change of circuit.
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 6s #will make it half-open after 6 seconds
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+
+java change
+add @CircuitBreaker annotation with name and fallbackmethod  in a microservice which has depenedency of another service which can lead to failure when that service is down.
+Make sure fallbackmethod you create has same return type as of method where circuit breaker is implemented.
+parameter used in this fallback method should be same as of method where circuit breaker is implemented one extra parameter should be added for exception.
+
+Example:
+@CircuitBreaker(name = "ratingHotelBreaker", fallbackMethod = "ratingMethodFallack")
+@GetMapping("{userId}")
+public ResponseEntity<User> getUserById(@PathVariable String userId)
+{
+	return ResponseEntity.ok(userService.getUser(userId));
+}
+
+public ResponseEntity<User> ratingMethodFallack(String userId, Exception ex)
+{
+	log.info("{exception}: " + ex.getMessage());
+	User user = User.builder().userId("Dummy id")
+			.email("dummy@gmail.com")
+			.about("providing dummy response as rating server is not responsive")
+			.build();
+	return new ResponseEntity<>(user, HttpStatus.OK);
+}
+
+Testing through actuator
+http://<main-service>/actuator/health
+check how many calls are failed through failureRateThreshold, state:"CLOSED"
+If failed calls increased to 50%, then status will change to open.
+After some time as configured, state will chnage to half open.
+If failed calls are less than 50%, then status will change to cloed else will agai go back to open.
+----------------------------------------------------------
+Retry design pattern Fault tolerance
+
+There can be situation that other service is slow to give response.
+For that purpose we can add max retry numbers to call that service.
+
+3 dependencies need to be added:
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+<dependency>
+	<groupId>io.github.resilience4j</groupId>
+	<artifactId>resilience4j-spring-boot3</artifactId>
+	<version>2.0.2</version>
+</dependency>
+
+application.yml configuration:
+
+management:
+  health:
+    circuit breakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health # done to expose health of actuator where wew can check how many calls are failed or passed and circuit state
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+    retry:
+    instances:
+      ratingHotelService:
+        max-attempts: 3
+        wait-duration: 5s
+
+
+java code:
+@Retry(name = "ratingHotelService", fallbackMethod = "ratingMethodFallack")
+@GetMapping("{userId}")
+public ResponseEntity<User> getUserById(@PathVariable String userId)
+{
+	log.info("retry count{}: " + retryCount);
+	retryCount++;
+	return ResponseEntity.ok(userService.getUser(userId));
+}
+
+public ResponseEntity<User> ratingMethodFallack(String userId, Exception ex)
+{
+	log.info("{exception}: " + ex.getMessage());
+	User user = User.builder().userId("Dummy id")
+			.email("dummy@gmail.com")
+			.about("providing dummy response as rating server is not responsive")
+			.build();
+	return new ResponseEntity<>(user, HttpStatus.OK);
+}
+
+If dependent service is down, then it will retry till configured value present in yml file.
+If still there is no response then, it will show  fallback method response (ex: ratingMethodFallack)
+-------------------------------------------------------------
+Rate limiter fault tolerance
+We need to control the amount of request user is sending to server.
+there should be limit per second or per min or per hour the amount of request user can send to server.
+
+Jmeter testing
+for testing downoad jmeter and go to bin -> jmeter bat file.
+jmeter gui -> testplan -> add -> threads -> thread group -> no ofusers <count>(15)
+jmeter gui -> testplan -> add -> sampler -> http request -> app ip and port number and path
+right click http request -> add -> listener -> view result tree -> run
+
+http://localhost:8081/users/a32ae008-369f-4098-8007-411a1cb458ac
+-------------------------------------------------------------
+Notes: Spring boot
+1.	yml file is used in complex projects. Plus it has tree structure and support multiple datat types. Properties files has key value structure.
+2.	@Builder -> helps to create object of class and set values in one line by className.builder().fields(setField).build().
+3.	If pathVariable name and parameter is same then, we do not need to provide name from postman.
+4.	# sometimes dialect related error can come when hibernate can not be detected.
+    # Use ctrl+n -> search mysqlDialect
+jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect #dialect config is taken by default
+
+5.	@Transient is used when particular property of entity class should not be stored in DB.
+6.	If project is loaded manually then, click on right side maven button -> + -> project directory (always pick your parent directory of pom.xml)
+7.	Manual Exceptions are extended by RUNTIMEEXception and globalExceptionHandler is created with @RestControllerAdvice and   
+    @ExceptionHandler(ManualException.class) name.
+8.	Another project is added in our project by opening + button of maven present at right side of coding area.
+9.	@Document( “documentname”) is used instead of @Entity for mongoDB.
+10.	Id is be default autogenerated in mongodb.
+11. to enable logs in class, use @Slf4j and use log.info().
+12. When pathVariable name present in annotation and method parameter name is same then, we do not need to provide name inside pathvariable
+13. To create object & set values of class, use @Builder annotation and use this class builder in another class where values need to be set.
+    Ex: Rating rating = Rating.builder().rating(10).userId("").hotelId("").feedback("feign testing feedback").build();
+14. Values present in application.yml are taken priority-wise from top to bottom.
+15. Also, reload dependencies when new dependency is added.
+16. Inside src/main/resources/static we generally add .css files.
+17. Inside src/main/resources/templates we generally add .jsp or .html files.
+18. We can test our db connection by implemeting CommandLineRunner in main class.
+    Ex:
+	@SpringBootApplication
+	public class StudentManagementThymeleafMysqlApplication implements CommandLineRunner{
+		public static void main(String[] args) {
+			SpringApplication.run(StudentManagementThymeleafMysqlApplication.class, args);
+		}
+
+		@Autowired
+		private StudentRepository studentRepo;
+		@Override
+		public void run(String... args) throws Exception {
+			studentRepo.save(new Student("Nilakshi", "Jain", "neelakshi@gmail.com"));
+			studentRepo.save(new Student("Nidhi", "Kumari", "nidhi@gmail.com"));
+		}
+	}
+19. yml file is used in complex projects and has key value structure. Plus, it has tree structure and support multiple data types.
+20. When we add spring security dependency, all controller request mapping are secured, they can be accessed by using username: user and generated password on console.
+21. file -> New -> maven project is used for spring projects and not for spring boot projects.
+22. version of dependencies core, aop and context should be same while adding it in project.
+23. We can add queries in inetrface implementing JPARepository
+public interface PersonRepository extends JpaRepository<Person, Integer> 
+{
+    @Query("SELECT CASE WHEN COUNT(s) > 0 THEN TRUE ELSE FALSE END FROM Person s WHERE s.id = ?1")
+    Boolean isPersonExistsById(Integer id);
+}
+24. method which we want to test -> select the method -> ctrl+shift+t -> add test case in that test class.
+25. @transactional is used for transactions operations. If operation is successful, then changes done in db are COMITTED else rollback operation is performed on db.
+26. To add more than one securityFilterChain present in 2 different configuration, order is set one after another securityFilterChain by @Order(1) and @Order(2) as per order they should be called.
+---------------------------------------------------------------------
+Not implemented
+
+OKTA security
+It is third party service which provides both Oauth (authorization) and openId (Authenticaion).
+
+client Request for authentication -> api gateway -> okta with provide token -> gateway -> client 
+client again send request to access service with token in header -> gateway -> reacher to service along with token in header
+We can also set scope for token so that it can not be access by externally directly.
+
+We need to create groups & people as well as application inside okta. assign groups to people -> assign applicatons to people and groups.
+ 
+
+Steps:
+OKTA Developers -> sign in
+all users will come in Directory -> people
+Directory -> Groups -> If groups should be used in application then, make sure group is assigned inside services of application
+applications -> create app -> token based OpenId  -> web app -> tick authorization code & refresh token
+-> sign re-direct url should have ip of api gateway (In our project localhost:8084) http://localhost:8080/login/oauth2/code/okta 
+-> skip controlled access for groups for now
+in final check if controlled access is app only
+create 2 groups normal and admin from directory -> groups
+applications -> assign -> assign to groups -> assign these groups
+directory -> people -> create people -> assign to both these groups -> set password
+
+applications -> assign -> assign to this people 
+
+security -> api -> authorization servers -> default -> scopes -> add scope -> name it and create
+claims -> add claim -> name -> Include in token type(Access token) -> value type(groups) -> Matches regex (.*) -> saved
+
+Add dependency in gateway service:
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+<dependency>
+  <groupId>com.okta.spring</groupId>
+  <artifactId>okta-spring-boot-starter</artifactId>
+  <version>3.0.6</version>
+</dependency>
+
+pom.xml 
+
+okta:
+  oauth2:
+    issuer: https://dev-88233229.okta.com/oauth2/default #security -> api -> authorization servers -> default -> copy issuer url
+    audience: api://default                              #security -> api -> authorization servers -> default -> copy audience
+    client-id: 0oaf824jegPFxf2g95d7                      #applications -> our app name -> client id
+    client-secret: SDJ60S92v1QtrApDzbu_fN-UlZz7MiEHZW5_5sE664ajjE8RtAY97wt-XKLOWlB-#applications -> our app name -> client secret
+    scopes: openid, profile, email, offline_access
+-------------------------------------------------------------
+Web security
+
+add web security by creating security config class
+add annotation @EnableWebSecurity and @Configuration
+
+create bean method which will return securityFilterChain and add security authentication filters
+
+-------------------------------------------------------------

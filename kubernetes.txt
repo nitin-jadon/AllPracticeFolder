@@ -1,0 +1,180 @@
+Kubernetes (k8s)
+
+used for Container orchestration tool, manages containerized applications used in the project (manages containerized applications deployed on docker).
+rise of microservice archicture leads to increase in containerized applications as all microservices are deployed in different containers.
+
+provides high availability, high scalability due to replicas, load balancing, disaster recovery (backup and restore), monitoring of deployed apps on container
+
+Features:
+1. Automatic bin packing
+automatically packages the application and schedules container as per the app requirement and resource availability
+
+2. Service discovery and load balancing
+As pods are grouped in service, traffic coming is load balanced among the pods 
+
+3. Storage orchestration
+usually a single volume for storage for all containers inside the pod
+
+4. self healing
+If container fails                          -> restart container
+If node dies                                -> replaces and reschedule container on other nodes
+If container not responding to health check -> kills container
+
+5. automatic rollout and rollbacks
+rollout -> deploy or configure the app in container
+rollback  -> revert the changes if not required
+
+6. Secret and configuration management
+secret (max size limit is 1mb)     -> object containing secret data inside node like tokens, passwords, etc that separates sensitive data from pods and containers.
+config maps -> contains configuration to separate configurations from pods and containers.
+Both of them are stored in etcd (key-value data store database)
+
+7. batch execution
+batch jobs creates one or more pods. If any pod fails then, job controller will reschedule the pod, container on another node.
+If job is done, then all pods will come from running state to shutdown state.
+
+8. Horizontal scaling
+scale up/down the containers.
+manifest file (has config regarding no. of replicas to be created) -> Replication controller -> maintains replicas of pods (If any pod fails then, schedule another pod to maintain number of pods)
+
+Cluster contains atleast 1 worker and 1 master node.
+Till v1.16, k8s support upto 5000 nodes, 150000 total pods, 3 lakh containers, 100 pods per node.
+
+-> POD
+smallest unit of K8, wraps one or more container, usually a single volume for storage for all conatiners, node can have multiple pods.
+provides abstraction over container, added on top of Containers so that there is direct connection with kubernetes layer
+has its own ip address and new ip address is allocated if pod is replaced/re-created due to some reasons.
+
+Node has multiple containers and on top of each node there is a pod.
+
+-> Service
+same set of pod having similar functions are grouped in one set called service, single dns-name is given to this set of pods (service).
+
+-> Ingress
+all services are attached to ingress and it provides the naming of each service instead of using server-name and port number for each of service.
+
+-> secret
+contains secret data like credentials, in base64 encoded
+
+-> config map
+has external configuration of application and distributes in all nodes.
+
+-> Volumes
+if database pod is restarted, then all data is lost as K8 is not data persistant.
+Volumes provide storage path may be in local or in cloud to store the data.
+
+-> replica
+replicas are created for application pod/database pod so that during downtime another replica can handle the request.
+each replica of same type are connected with each other by service.
+replica 1 -> service <- replica 2
+blueprint of app deployment contains info regarding how many replicas to be created.
+
+-> worker nodes
+They actually do the work, contains multiple pods attched with containers
+	3 node processes installed installed in every worker node
+	-> container runtime
+	responsible for managing the execution and lifecycle of containers within the Kubernetes environment
+
+	-> Kubelet
+	Kubelet starts/restarts the pod with container inside, interacts with container runtime, coordinating pods and nodes.
+
+	-> Kube proxy
+	It forwards the request to reduce the overhead to call another replica. eg: instead of calling DB pod of another replica, it will redirect it same db pod.
+	It is responsible for maintaining network connectivity between services and pods. It watches the api server of master node for addition/removal of services.
+
+-> master node
+   handles and manages all worker nodes and cluster, we can have more than 1 master node, if any node fails then it sends the work load to another node.
+   Contains 4 component
+   -> api server (exposes api to interact with K8S, gateway for cluster of client eg (CLI first talk with api server), validates request(json over http api))
+   -> scheduler  (for distributing the workload as per resource availability, responsible for tracking utilization of working load on cluster nodes)
+   -> controller manager (detects cluster state changes like crashing of pods -> goes to scheduler to restart the pod, checks health of cluster by checking the state)
+   -> etcd (It stores the configuration information which can be used by each of the nodes in the cluster, store data in key value store)
+
+Node controller -> checks if any node goes down, replication controller -> checks if exact replicas are there as defined in spec file
+service account & token controller -> create default accounts & API access token
+
+-> miniKube
+tool which has single node kubernetes cluster containing master and worker processes. Docker is pre-installed. runs on virtual box. helps to run kubernetes locally.
+
+-> Kubectl
+commands which goes to api server of node and execute commands like creating pods, destroying pods, or any configuration to be added.
+
+---------------------------------------------------------------------------------------------------------------------------------
+Installations
+online sites -> Play with k8s, kubernetes playground, play with kubernetes classroom
+tools -> minicube, kubeadm
+cloud -> amazon eks
+---------------------------------------------------------------------------------------------------------------------------------
+Hands on -> google -> play with kubernetes classroom -> kubernetes hand-on workshop
+kubeadm init --apiserver-advertise-address $(hostname -i)  -> start master node on cluster
+"kubeadm join" related command will come once master node start and paste the command on another node to act as worker node
+kubectl get nodes    -> on master node to check total nodes.
+kubectl get pods     -> check running pods
+kubectl get services -> check services
+on master node
+git clone https://github.com/dockersamples/dockercoins  -> in this repo some docker-compose config file is present
+cd ~/dockercoins -> docker-compose up    -> start the docker through yml file present in this repo
+
+
+Hands on -> google -> kubernetes playground -> katakoda
+
+kubectl cluster-info              -> check health of cluster
+kubectl get nodes                 -> get nodes of cluster
+kubectl get services or service   -> get services
+docker -v                         -> check docker version
+kubectl create deployment first-deployment --image=katacoda/docker-http-server -> allows container to be deployed on cluster
+kubectl get pods                  -> check running pods
+kubectl expose deployment first-deployment --port=80 --type=NodePort           -> provides dynamic port to container
+minikube addons enable dashboard  -> add dashboard
+
+Hands on -> google -> play with k8s -> add new instance -> initialize master node -> copy cluster networking command and run in master instance
+note(also copy command for worker node  kubeadm join .......)
+add new instance   -> run copied command (to add worker node in master node)
+kubectl run --nginx --image=nginx --replica=5                                  -> create 5 replicas of pods in worker node
+
+---------------------------------------------------------------------------------------------------------------------------------
+minikube commands
+Commands:
+minikube version
+minikube help
+minikube start   -> start and initial master node.
+minikube status
+minikube service
+minikube stop
+minikube delete
+
+kubectl get nodes
+kubectl get pods
+kubectl create
+kubectl expose
+kubectl delete
+
+install minnikube on windows -> enable virtualization on laptop -> https://minikube.sigs.k8s.io/docs/start/
+
+Running Kubernetes via Minikube
+
+Step 1 - Create a Kubernetes Deployment using an existing image
+kubectl create deployment hello-minikube --image=k8s.gcr.io/echoserver:1.10
+
+Step 2 - Expose the deployment as a service 
+kubectl expose deployment hello-minikube --type=NodePort --port=8080
+
+open link -> 192.168.64.4:30194 -> will give details of this service.
+
+Step 3 - Check the nodes and pods
+kubectl get nodes
+kubectl get pods
+
+Step 4 - Get URL of the service
+minikube service hello-minikube --url
+
+Step 5 - Delete service and deployment
+kubectl delete services hello-minikube
+kubectl delete deployment hello-minikube
+
+Step 6 - Stop minikube cluster
+minikube stop
+
+Step 7 - Delete minikube cluster
+minikube delete
+

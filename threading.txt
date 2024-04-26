@@ -1,0 +1,160 @@
+Threading                                                     Process     
+light weight sub process, smallest unit of processing         heavy weight
+share common area                                             separate memory allocation for each process
+cost of communication is low.                                 cost of communication is high.
+
+Thread states
+NEW           -> when thread is just created
+ACTIVE        -> when thread invokes .start() method
+  1. RUNNABLE -> thread is ready for exceution but waiting for CPU allocation. Thread scheduler has duty to provide specific time to each thread for CPU allocation to complete their job
+  2. RUNNING  -> when thread get CPU
+
+Blocked                          -> when another thread has acquired lock pn critical section and this thread is waiting for aquiring the lock on that critical section
+Waiting                          -> Thread is waiting for notification to become active again
+wait() method causes current thread to release the lock and wait until either another thread invokes the notify() method or the notifyAll() method for this object, or a specified amount of time has elapsed
+wait vs sleep                    -> sleep does not release the lock, wait release the lock.
+---------------------------------------------------------------------------------------------------------------------------------------
+Timed waiting                    -> thread is waiting for timely notification
+Thread.currentThread().getName() -> current thread name
+yield                            -> used when thread wants to wait to give chances to another thread of higher or same priority to complete their execution.
+join                             -> used when current executing thread needs to wait until completion of some other thread
+example1: th1.start(), th2.start(), th2.join() -> here, th1 will stop its execution until th2 will finish its execution.
+
+example2:
+class TestJoinMethod2 extends Thread{    
+ public void run(){    
+  for(int i=1;i<=5;i++){    
+   try{    
+    Thread.sleep(500);    
+   }catch(Exception e){System.out.println(e);}    
+  System.out.println(i);    
+  }    
+ }    
+public static void main(String args[]){    
+ TestJoinMethod2 t1=new TestJoinMethod2();    
+ TestJoinMethod2 t2=new TestJoinMethod2();    
+ TestJoinMethod2 t3=new TestJoinMethod2();    
+ t1.start();    
+ try{    
+  t1.join(1500);    
+ }catch(Exception e){System.out.println(e);}    
+    
+ t2.start();    
+ t3.start();    
+ }    
+}
+
+Here, 1, 2, 3 will print as t1 is executing in CPU till 1500ms after that randomly all threads will execute.
+---------------------------------------------------------------------------------------------------------------------------
+daemon thread -> low priority thread used for garbage collection, provides services to user thread for background supporting task.
+t1.setDaemon(true);
+if(Thread.currentThread().isDaemon()){//checking for daemon thread  
+   System.out.println("daemon thread work");  
+  }
+----------------------------------------------------------------------------------------------------------------------------
+sleep         -> halt the execution of thread for specified amount and it can continue its execution from where it left once awake
+----------------------------------------------------------------------------------------------------------------------------
+create thread:
+implementing runnable interface
+extending Thread class
+Note: better to implement runnable then., extending thread else we would not be able to extend another class.
+----------------------------------------------------------------------------------------------------------------------------
+Thread scheduler 
+It provides CPU to thread on basis of first priority and if priority is same the, time of arrival.
+Priority is set between 1-10
+
+algorithm used by scheduler:
+fcfs(non-pre-emptive){It can lead to starvation if current thread is taking infinite time in cpu and other threads are waiting for infinite time},
+time slicing(pre-emptive) {provides CPU to each thread for some specified time},
+
+Note: 
+We can not start a thread once already started else IllegalThreadStateException will occur.
+If we are not calling start() then, separate call stack will not be created and it will behave as normal object not thread object.
+--------------------------------------------------------------------------------------------------------------------------------
+Thread priority (1-10)
+MIN_PRIORITY -> 1, 	NORM_PRIORITY -> 5, MAX_PRIORITY -> 10
+
+Thread.currentThread().setPriority(<number>) -> set priority
+---------------------------------------------------------------------------------------------------------------------------------
+Thread pool
+worker threads waiting to get job when required and again come back in pool once task is finished.
+public static void main(String[] args) {  
+	ExecutorService executor = Executors.newFixedThreadPool(5);//creating a pool of 5 threads  
+	for (int i = 0; i < 10; i++) {  
+		Runnable worker = new WorkerThread("" + i);  
+		executor.execute(worker);//calling execute method of ExecutorService  
+	  }  
+	executor.shutdown();  
+	while (!executor.isTerminated()) {   }  
+
+	System.out.println("Finished all threads");  
+}  
+
+Drawbacks:
+deadlock      : when one thread is assigned to resource r1, and waiting for resource r2 and another thread is waiting for resource r1 and assigned to resource r2. leads to circular wait.
+To avoid deadlock, try to use join(), avoid unnecessary locks.
+
+starvation    : high priority thread keep on getting resource and low priority thread keep on waiting for infinite time
+Thread leakage: if exeception is not captured then, it will be released from pool and pool size will decrease to 1.
+----------------------------------------------------------------------------------------------------------------------------------
+ShutdownHook Method
+When we want to execute some code like clean up just before JVM is shutting down then, shutdownHookMethod can be helpful.
+JVM stops when user presses ctrl+c, system.exit(), logging off then, before shutting down of JVM, this method thread can be executed.
+
+class MyThread extends Thread{    
+    public void run(){    
+        System.out.println("shut down hook task completed..");    
+    }    
+}    
+    
+public class TestShutdown1{    
+public static void main(String[] args)throws Exception {    
+    
+Runtime r=Runtime.getRuntime();    
+r.addShutdownHook(new MyThread());    
+        
+System.out.println("Now main sleeping... press ctrl+c to exit");    
+try{Thread.sleep(3000);}catch (Exception e) {}    
+}    
+}
+
+Note: there is no guarantee that ShutdownHookMethod will execute or not just before jvm is stopping as it might have been stopped due to some internal errors.
+----------------------------------------------------------------------------------------------------------------------------------
+Garbarge collection
+Garbage            -> unused objects
+garbage collection -> reclaiming unused memory and destroying unused objects.
+
+unused objects are unreferenced objects by:
+1. Nullying objects
+	Employee e = new Employee();
+	e =null;
+2. Assigning reference to another
+	Employee e1 = new Employee();
+	Employee e2 = new Employee();
+	e1 = e2;
+	Here, object of e1 is not referenced to anyone so it would be destroyed
+3. Anonymous class
+   here, no reference variale is used hence they are destroyed after execution.
+
+
+finalize() -> it is invoked just before object is garbage collected for clean up
+Note: The Garbage collector of JVM collects only those objects that are created by new keyword. So if you have created any object without new, you can use finalize method to perform cleanup processing (destroying remaining objects).
+
+gc()       -> used to invoke garbage collector { System.gc(); }
+Note: Garbage collection is performed by a daemon thread called Garbage Collector(GC). This thread calls the finalize() method before object is garbage collected.
+------------------------------------------------------------------------------------------------------------------------------------------
+Runtime
+Runtime.getRuntime()                 -> returns singleton runtime class to interact with runtime environment
+Runtime.getRuntime().exec("Notepad") -> execute commands
+Runtime.getRuntime().availableProcessors()
+Runtime.getRuntime().freeMemory()
+------------------------------------------------------------------------------------------------------------------------------------------
+Synchronization     -> to control the access of resource to only one thread/process at a time
+synchronized method, block
+
+static synchronized -> lock is on class and not on object.
+-------------------------------------------------------------------------------------------------------------------------------------------
+interrupt()
+If any thread is in sleeping or waiting state (i.e. sleep() or wait() is invoked), calling the interrupt() method on the thread, breaks out the sleeping or waiting state throwing InterruptedException. If the thread is not in the sleeping or waiting state, calling the interrupt() method performs normal behaviour and doesn't interrupt the thread but sets the interrupt flag to true
+t1.interrupt()
+Note: sleep does not release the lock, wait release the lock

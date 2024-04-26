@@ -1,0 +1,234 @@
+java8
+
+microservices
+design patterns
+threading
+rest api, soap
+java spring boot interview question
+ways to create object, comparable/comparator, iterable, db steps, sorting, searching
+
+lambda function
+anonymous function with no name, no access modifier and no return type
+--------------------------------
+bean -> encapsulates many objects into one object so that it can used in different places of code.
+
+functional interface
+contains only 1 abstract methods
+example: Runnable has one abstract method run(), Callable has one method call()
+Runnable thread1 = ()->{
+for(int i=0;i<10;i++)
+{
+	System.out.println(i);
+	try {
+		Thread.sleep(1000);
+	} catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+}
+};
+Thread th = new Thread(thread1);
+th.start();
+
+Some other default java8 functional interface
+predicate -> boolean result
+consumer  -> input only no result
+function  -> input/output
+supplier  -> no input only supplier
+
+Can be implemented by 3 ways:
+1 create class -> implement interface and call method
+2 create anonymous class
+NotDefaultFunctionalInterface fi = new NotDefaultFunctionalInterface() {
+	
+	@Override
+	public void oneMethod() {
+		// TODO Auto-generated method stub
+		System.out.println("Implementing functional interface");
+	}
+};
+fi.oneMethod();
+
+3 using lambda expression
+NotDefaultFunctionalInterface dfi = ()->{System.out.println("implementation through lambda");};
+dfi.oneMethod();
+
+-----------------------------
+List.of(1,2,3,4) -> to declare and initialize values but we can not add more values after initialization
+------------------------------
+stream api
+String[] str = {"hello","bye"};
+Stream.of(str).collect(...);
+--------------------------------
+Method reference -> complete function reference is used in functional interface abstract method, avoid code redundancy
+//1 by using static method reference
+ClassName::methodName
+FunctionalInterfaceTemp functionalInterfaceTemp = Temp::printing;
+
+functionalInterfaceTemp.doPrinting();
+
+//2 refering non-static method
+create object -> objectName::methodName
+Temp t = new Temp();
+FunctionalInterfaceTemp functionalInterfaceTemp1 = t::nonStatiPrinting;
+functionalInterfaceTemp1.doPrinting();
+
+------------------------------------------------
+Constructor reference
+className::new
+FunctionalInterfaceTemp temp = Student::new;
+Student student = temp.getStudent();
+student.display();
+
+Student.java
+public class Student {
+
+public Student()
+{
+	System.out.println("creating constructor object thorugh constructor reference");
+}
+public void display()
+{
+
+	System.out.println("values print");
+}
+}
+
+@FunctionalInterface
+public interface FunctionalInterfaceTemp {
+
+	public abstract Student getStudent();
+}
+----------------------------------------------------
+optional -> to handle null pointer exceptions
+String str = "values is hjhj";
+Optional<String> optional = Optional.ofNullable(str);
+System.out.println(optional.isPresent());
+System.out.println(optional.get());
+System.out.println(optional.orElse("value is null"));
+-----------------------------------------------------
+Generic -> to allow a particular class to have a particular datatype for each object 
+example:
+GenericClass.java
+public class GenericClass<T> {
+
+	T container;
+	public GenericClass(T container) {
+		// TODO Auto-generated constructor stub
+		this.container = container;
+	}
+	public Object getValue()
+	{
+		return container;
+	}
+}
+
+Main.java
+public static void main(String[] args) 
+{
+	// TODO Auto-generated method stub
+
+	GenericClass<String> gc = new GenericClass<String>("value");
+	System.out.println(gc.getValue());
+}
+-----------------------------------------------------------------------------------
+static methods
+Static methods are used to define utility methods.
+default methods -> to provide backward compatibility, default methods are added.
+
+abstract classes can have constructors which interface can not have.
+-------------------------------------------------------------------------------
+Concurrent Modification: Concurrent Modification in programming means to modify an object concurrently when another task is already running over it.
+
+Fail-Fast iterators immediately throw ConcurrentModificationException if there is structural modification of the collection. Structural modification means adding, removing any element from collection while a thread is iterating over that collection. 
+Example: Iterator on ArrayList, HashMap classes
+
+Fail-Safe iterators don’t throw any exceptions if a collection is structurally modified while iterating over it. This is because, they operate on the clone of the collection, not on the original collection and that’s why they are called fail-safe iterators
+example: CopyOnWriteArrayList, ConcurrentHashMap
+-----------------------------------------------------------
+hashmap
+array of link list(buckets)
+step 1: map.put(key, value) -> hash function -> bucket index
+Step 2: iterate over values of buckets if found then update else insert
+
+Complexity: lambda = n(total no of elemets)/N(bucket) <= threshold value
+If lambda increases then rehashing occurs and array size is doubled.
+----------------------------------------------------------------------------
+api -> contains set of rules and codes that helps the client to interact with application.
+Example: user from web site sends -> api request to server with specific params defined in api -> returns response to user.
+
+HTTP responses:
+401: unauthorised
+404: resource not found
+500: server error
+200: success
+201: created
+
+Rest api -> architectural style provides set of rules for creating web services.
+follows 6 constraints:
+uniform interface -> there should be uniform way for clients be it desktop, or mobile to interact with server.
+cacheable         -> data from response can be cacheable so that if next time user asks for data then, it can be directly provided through lcoal caches.
+client-server     -> client sends request to server.
+stateless         -> server do not save any data related to user inside the db.
+layered system    -> app should have layered system. Each layer doesn’t know any thing about any layer other than that of immediate layer
+code on demand    -> It is an optional feature. servers can also provide executable code to the client. Example Java Servlets, js
+
+SOAP                                           Rest
+Simple Object Access Protocol                  Representational State Transfer
+Transports data in standard XML format         Generally transports data in JSON, XML
+Highly structured/typed	                       Less structured
+requires high bandwidth                        Requires low bandwidth
+follow ACID properties                         Do not follow ACID properties
+Used in banking systems
+----------------------------------------------------------------------------------------------
+Runtime polymorphism
+call to an overidden method is resolved at runtime rather than at compiled time.
+
+Rules:
+RULE 1: compile time checks LHS (reference variable) whether it’s allowed or not.
+RULE 2: runtime checks RHS(Object) which values or method to be used.
+RULE 3: conflict is resolved through reference.
+
+flow: common allowed variables and methods -> child class -> parent class
+first lhs reference is checked (example: obj has p.d = 1, p.d1 = 10, c.d2 = 20, c.d = 2)
+Second rhs object is checked whose method to be used.(checks available child methods like fun, fun2 -> checks available parent methods like fun, fun1)
+third: conflicts are resolved by reference.
+
+Example:
+public class Main
+{
+    static class P{
+        int d = 1;
+        int d1 = 10;
+        
+        void fun(){
+            System.out.println("p fun");
+        }
+        void fun1(){
+            System.out.println("p fun1");
+        }
+    }
+    
+    static class C extends P{
+        int d = 2;
+        int d2 = 20;
+        
+        void fun(){
+            System.out.println("c fun");
+        }
+        void fun2(){
+            System.out.println("c fun2");
+        }
+    }
+    
+	public static void main(String[] args) {
+		P obj = new C();
+		
+		System.out.println(obj.d); // 1 common allowed variables are checked first and conflict of d is resolved by reference which is P. 
+		System.out.println(obj.d1);// 10 common allowed variables are checked first. 
+	//	System.out.println(obj.d2);// not allowed as P reference is not having d2 variable, rule 1 fails, compile time error
+	    obj.fun();//c fun as first child class is called then, parent class
+	    obj.fun1();//p fun1 
+	//  obj.fun2();// not allowed as P reference is not having fun2 method. rule 1 fails, compile time error
+	}
+}
